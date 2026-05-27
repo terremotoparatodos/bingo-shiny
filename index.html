@@ -38,7 +38,6 @@
     padding: 20px 10px 40px;
   }
 
-  /* Stars bg */
   body::before {
     content: '';
     position: fixed;
@@ -58,11 +57,7 @@
 
   .wrap { position: relative; z-index: 1; width: 100%; max-width: 1100px; }
 
-  /* ── Header ── */
-  .header {
-    text-align: center;
-    margin-bottom: 28px;
-  }
+  .header { text-align: center; margin-bottom: 28px; }
   .header h1 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(36px, 6vw, 64px);
@@ -74,117 +69,65 @@
     line-height: 1;
     margin-bottom: 6px;
   }
-  .header p {
-    font-size: 13px;
-    color: var(--text-muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-  .shiny-star {
-    display: inline-block;
-    color: var(--shiny);
-    font-size: 20px;
-    margin: 0 8px;
-    animation: twinkle 1.8s infinite alternate;
-  }
+  .header p { font-size: 13px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; }
+  .shiny-star { display: inline-block; color: var(--shiny); font-size: 20px; margin: 0 8px; animation: twinkle 1.8s infinite alternate; }
   @keyframes twinkle { from { opacity: 0.4; transform: scale(0.9); } to { opacity: 1; transform: scale(1.1); } }
 
-  /* ── Controls ── */
+  /* sync indicator */
+  .sync-bar {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; margin-bottom: 16px; font-size: 12px; color: var(--text-muted);
+  }
+  .sync-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #555; transition: background 0.3s;
+  }
+  .sync-dot.online { background: #4caf50; box-shadow: 0 0 6px #4caf50; }
+  .sync-dot.syncing { background: var(--gold); animation: pulse 0.6s infinite alternate; }
+  .sync-dot.error { background: var(--ruby-light); }
+  @keyframes pulse { from { opacity: 0.4; } to { opacity: 1; } }
+
   .controls {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
+    display: flex; gap: 10px; justify-content: center;
+    margin-bottom: 24px; flex-wrap: wrap;
   }
   .btn {
-    background: var(--surface2);
-    border: 1px solid #333355;
-    color: var(--text);
-    font-family: 'Nunito', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 8px 18px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.15s;
-    letter-spacing: 0.5px;
+    background: var(--surface2); border: 1px solid #333355;
+    color: var(--text); font-family: 'Nunito', sans-serif;
+    font-size: 13px; font-weight: 600; padding: 8px 18px;
+    border-radius: 8px; cursor: pointer; transition: all 0.15s; letter-spacing: 0.5px;
   }
   .btn:hover { background: #26264a; border-color: #6666aa; }
   .btn.danger { border-color: var(--ruby); color: var(--ruby-light); }
   .btn.danger:hover { background: rgba(193,39,45,0.15); }
 
-  /* ── Boards layout ── */
-  .boards {
-    display: flex;
-    gap: 30px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
+  .boards { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
 
-  .board-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-  }
+  .board-section { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 
-  /* Player header */
   .player-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 20px;
-    border-radius: 12px;
-    border: 2px solid;
-    width: 100%;
-    justify-content: center;
-    position: relative;
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 20px; border-radius: 12px; border: 2px solid;
+    width: 100%; justify-content: center; position: relative;
   }
-  .player-header.ruby {
-    background: rgba(193,39,45,0.15);
-    border-color: var(--ruby);
-    box-shadow: 0 0 20px rgba(193,39,45,0.2);
-  }
-  .player-header.sapphire {
-    background: rgba(21,101,192,0.15);
-    border-color: var(--sapphire);
-    box-shadow: 0 0 20px rgba(21,101,192,0.2);
-  }
-  .player-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 26px;
-    letter-spacing: 2px;
-  }
-  .ruby .player-name { color: var(--ruby-light); }
-  .sapphire .player-name { color: var(--sapphire-light); }
+  .player-header.ruby { background: rgba(193,39,45,0.15); border-color: var(--ruby); box-shadow: 0 0 20px rgba(193,39,45,0.2); }
+  .player-header.sapphire { background: rgba(21,101,192,0.15); border-color: var(--sapphire); box-shadow: 0 0 20px rgba(21,101,192,0.2); }
 
   .player-name-input {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px;
-    letter-spacing: 2px;
-    background: transparent;
-    border: none;
-    border-bottom: 1px dashed rgba(255,255,255,0.3);
-    color: inherit;
-    text-align: center;
-    outline: none;
-    width: 140px;
+    font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px;
+    background: transparent; border: none; border-bottom: 1px dashed rgba(255,255,255,0.3);
+    color: inherit; text-align: center; outline: none; width: 140px;
   }
   .ruby .player-name-input { color: var(--ruby-light); }
   .sapphire .player-name-input { color: var(--sapphire-light); }
 
   .score-badge {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px;
-    padding: 2px 12px;
-    border-radius: 20px;
-    letter-spacing: 1px;
+    font-family: 'Bebas Neue', sans-serif; font-size: 20px;
+    padding: 2px 12px; border-radius: 20px; letter-spacing: 1px;
   }
   .ruby .score-badge { background: var(--ruby); color: #fff; }
   .sapphire .score-badge { background: var(--sapphire); color: #fff; }
 
-  /* ── Bingo grid ── */
   .bingo-grid {
     display: grid;
     grid-template-columns: repeat(4, var(--cell-size));
@@ -193,196 +136,77 @@
   }
 
   .cell {
-    width: var(--cell-size);
-    height: var(--cell-size);
-    background: var(--surface2);
-    border: 1.5px solid #2a2a44;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    padding: 6px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    user-select: none;
+    width: var(--cell-size); height: var(--cell-size);
+    background: var(--surface2); border: 1.5px solid #2a2a44;
+    border-radius: 10px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; cursor: pointer;
+    transition: all 0.2s; padding: 6px; text-align: center;
+    position: relative; overflow: hidden; user-select: none;
   }
-  .cell:hover {
-    border-color: #5555aa;
-    transform: scale(1.03);
-  }
+  .cell:hover { border-color: #5555aa; transform: scale(1.03); }
 
-  /* Checked states */
-  .cell.checked-ruby {
-    background: rgba(193,39,45,0.25);
-    border-color: var(--ruby);
-    box-shadow: inset 0 0 14px rgba(193,39,45,0.3);
-  }
-  .cell.checked-sapphire {
-    background: rgba(21,101,192,0.25);
-    border-color: var(--sapphire);
-    box-shadow: inset 0 0 14px rgba(21,101,192,0.3);
-  }
+  .cell.checked-ruby { background: rgba(193,39,45,0.25); border-color: var(--ruby); box-shadow: inset 0 0 14px rgba(193,39,45,0.3); }
+  .cell.checked-sapphire { background: rgba(21,101,192,0.25); border-color: var(--sapphire); box-shadow: inset 0 0 14px rgba(21,101,192,0.3); }
   .cell.checked-ruby::after, .cell.checked-sapphire::after {
-    content: '✦';
-    position: absolute;
-    top: 4px;
-    right: 6px;
-    font-size: 14px;
-    animation: pop 0.3s ease;
+    content: '✦'; position: absolute; top: 4px; right: 6px;
+    font-size: 14px; animation: pop 0.3s ease;
   }
   .cell.checked-ruby::after { color: var(--ruby-light); }
   .cell.checked-sapphire::after { color: var(--sapphire-light); }
   @keyframes pop { from { transform: scale(0) rotate(-20deg); } to { transform: scale(1) rotate(0); } }
 
-  /* Bingo line highlight */
-  .cell.bingo-line {
-    animation: bingo-pulse 0.8s ease infinite alternate;
-  }
-  .ruby-board .cell.bingo-line { animation-name: bingo-pulse-ruby; }
-  .sapphire-board .cell.bingo-line { animation-name: bingo-pulse-sapphire; }
-  @keyframes bingo-pulse-ruby {
-    from { box-shadow: inset 0 0 14px rgba(193,39,45,0.3); }
-    to { box-shadow: inset 0 0 28px rgba(193,39,45,0.7), 0 0 16px rgba(193,39,45,0.5); }
-  }
-  @keyframes bingo-pulse-sapphire {
-    from { box-shadow: inset 0 0 14px rgba(21,101,192,0.3); }
-    to { box-shadow: inset 0 0 28px rgba(21,101,192,0.7), 0 0 16px rgba(21,101,192,0.5); }
-  }
+  .ruby-board .cell.bingo-line { animation: bingo-pulse-ruby 0.8s ease infinite alternate; }
+  .sapphire-board .cell.bingo-line { animation: bingo-pulse-sapphire 0.8s ease infinite alternate; }
+  @keyframes bingo-pulse-ruby { from { box-shadow: inset 0 0 14px rgba(193,39,45,0.3); } to { box-shadow: inset 0 0 28px rgba(193,39,45,0.7), 0 0 16px rgba(193,39,45,0.5); } }
+  @keyframes bingo-pulse-sapphire { from { box-shadow: inset 0 0 14px rgba(21,101,192,0.3); } to { box-shadow: inset 0 0 28px rgba(21,101,192,0.7), 0 0 16px rgba(21,101,192,0.5); } }
 
   .cell-icon { font-size: 26px; line-height: 1; margin-bottom: 4px; }
-  .cell-text {
-    font-size: 10.5px;
-    font-weight: 700;
-    line-height: 1.3;
-    color: var(--text);
-  }
+  .cell-text { font-size: 10.5px; font-weight: 700; line-height: 1.3; color: var(--text); }
   .cell.checked-ruby .cell-text, .cell.checked-sapphire .cell-text { color: #fff; }
 
-  /* FREE cell */
-  .cell.free {
-    background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,215,0,0.05));
-    border-color: var(--gold);
-    cursor: default;
-  }
+  .cell.free { background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,215,0,0.05)); border-color: var(--gold); cursor: default; }
   .cell.free:hover { transform: none; }
   .cell.free .cell-icon { font-size: 30px; }
   .cell.free .cell-text { color: var(--gold); font-size: 11px; }
 
-  /* ── Bingo banner ── */
   .bingo-banner {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
+    display: none; position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    background: var(--surface);
-    border: 3px solid var(--gold);
-    border-radius: 20px;
-    padding: 30px 50px;
-    text-align: center;
-    z-index: 100;
-    box-shadow: 0 0 60px rgba(255,215,0,0.4);
+    background: var(--surface); border: 3px solid var(--gold);
+    border-radius: 20px; padding: 30px 50px; text-align: center;
+    z-index: 100; box-shadow: 0 0 60px rgba(255,215,0,0.4);
     animation: banner-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
   @keyframes banner-in { from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
   .bingo-banner.show { display: block; }
-  .bingo-banner h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 72px;
-    letter-spacing: 6px;
-    color: var(--gold);
-    line-height: 1;
-    text-shadow: 0 0 30px rgba(255,215,0,0.6);
-  }
+  .bingo-banner h2 { font-family: 'Bebas Neue', sans-serif; font-size: 72px; letter-spacing: 6px; color: var(--gold); line-height: 1; text-shadow: 0 0 30px rgba(255,215,0,0.6); }
   .bingo-banner p { color: var(--text-muted); margin-top: 8px; font-size: 16px; }
-  .bingo-banner .close-btn {
-    margin-top: 20px;
-    padding: 10px 30px;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px;
-    letter-spacing: 2px;
-    background: var(--gold);
-    color: #000;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-  }
+  .bingo-banner .close-btn { margin-top: 20px; padding: 10px 30px; font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; background: var(--gold); color: #000; border: none; border-radius: 10px; cursor: pointer; }
 
-  .overlay-bg {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    z-index: 99;
-    backdrop-filter: blur(2px);
-  }
+  .overlay-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 99; backdrop-filter: blur(2px); }
   .overlay-bg.show { display: block; }
 
-  /* ── Edit modal ── */
   .modal {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
+    display: none; position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    background: var(--surface);
-    border: 1.5px solid #3a3a5a;
-    border-radius: 16px;
-    padding: 24px;
-    z-index: 200;
-    width: 340px;
+    background: var(--surface); border: 1.5px solid #3a3a5a;
+    border-radius: 16px; padding: 24px; z-index: 200; width: 340px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.6);
   }
   .modal.show { display: block; }
   .modal h3 { font-size: 16px; margin-bottom: 16px; color: var(--text); font-weight: 700; }
   .modal label { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px; margin-top: 12px; text-transform: uppercase; letter-spacing: 1px; }
-  .modal input, .modal select {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid #3a3a5a;
-    color: var(--text);
-    font-family: 'Nunito', sans-serif;
-    font-size: 14px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    outline: none;
-  }
-  .modal input:focus, .modal select:focus { border-color: #6666aa; }
+  .modal input { width: 100%; background: var(--bg); border: 1px solid #3a3a5a; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 14px; padding: 8px 12px; border-radius: 8px; outline: none; }
+  .modal input:focus { border-color: #6666aa; }
   .modal-btns { display: flex; gap: 8px; margin-top: 20px; }
-  .modal-btns button {
-    flex: 1;
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-  }
+  .modal-btns button { flex: 1; padding: 10px; border-radius: 8px; border: none; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; }
   .modal-btns .save-btn { background: #4f4faa; color: #fff; }
   .modal-btns .save-btn:hover { background: #6666cc; }
   .modal-btns .cancel-btn { background: var(--surface2); color: var(--text); border: 1px solid #3a3a5a; }
 
-  /* ── Legend ── */
-  .legend {
-    margin-top: 30px;
-    background: var(--surface);
-    border: 1px solid #2a2a44;
-    border-radius: 12px;
-    padding: 16px 24px;
-    font-size: 12px;
-    color: var(--text-muted);
-    max-width: 500px;
-    text-align: center;
-    line-height: 2;
-  }
+  .legend { margin-top: 30px; background: var(--surface); border: 1px solid #2a2a44; border-radius: 12px; padding: 16px 24px; font-size: 12px; color: var(--text-muted); max-width: 500px; text-align: center; line-height: 2; }
   .legend strong { color: var(--text); }
 
-  /* Responsive */
   @media (max-width: 600px) {
     :root { --cell-size: 80px; }
     .cell-icon { font-size: 20px; }
@@ -398,26 +222,29 @@
     <p>Omega Ruby &nbsp;·&nbsp; Alpha Sapphire &nbsp;·&nbsp; Shiny Hunting</p>
   </div>
 
+  <div class="sync-bar">
+    <div class="sync-dot" id="sync-dot"></div>
+    <span id="sync-label">Conectando...</span>
+  </div>
+
   <div class="controls">
     <button class="btn" onclick="openEditMode()">✏️ Editar casillas</button>
     <button class="btn" onclick="resetAll()">↺ Nuevo juego</button>
-    <button class="btn danger" onclick="if(confirm('¿Resetear todo?')) hardReset()">🗑 Resetear todo</button>
+    <button class="btn danger" onclick="if(confirm('¿Resetear todo incluyendo casillas?')) hardReset()">🗑 Resetear todo</button>
   </div>
 
   <div class="boards">
-    <!-- RUBY -->
     <div class="board-section">
       <div class="player-header ruby">
-        <input class="player-name-input" id="name-ruby" value="JUGADOR 1" maxlength="16" title="Click para editar nombre" />
+        <input class="player-name-input" id="name-ruby" value="JUGADOR 1" maxlength="16" />
         <span class="score-badge" id="score-ruby">0/16</span>
       </div>
       <div class="bingo-grid ruby-board" id="board-ruby"></div>
     </div>
 
-    <!-- SAPPHIRE -->
     <div class="board-section">
       <div class="player-header sapphire">
-        <input class="player-name-input" id="name-sapphire" value="JUGADOR 2" maxlength="16" title="Click para editar nombre" />
+        <input class="player-name-input" id="name-sapphire" value="JUGADOR 2" maxlength="16" />
         <span class="score-badge" id="score-sapphire">0/16</span>
       </div>
       <div class="bingo-grid sapphire-board" id="board-sapphire"></div>
@@ -425,13 +252,13 @@
   </div>
 
   <div class="legend">
-    <strong>Click</strong> en una casilla para marcarla como conseguida &nbsp;|&nbsp;
-    <strong>Doble click</strong> para desmarcar &nbsp;|&nbsp;
-    Conseguí una línea completa (fila, columna o diagonal) para gritar <strong>¡BINGO!</strong>
+    <strong>Click</strong> para marcar &nbsp;|&nbsp;
+    <strong>Click de nuevo</strong> para desmarcar &nbsp;|&nbsp;
+    Línea completa = <strong>¡BINGO!</strong> &nbsp;|&nbsp;
+    Cambios sincronizados en tiempo real ✦
   </div>
 </div>
 
-<!-- Bingo overlay -->
 <div class="overlay-bg" id="overlay" onclick="closeBanner()"></div>
 <div class="bingo-banner" id="bingo-banner">
   <h2>¡BINGO!</h2>
@@ -439,73 +266,119 @@
   <button class="close-btn" onclick="closeBanner()">CERRAR</button>
 </div>
 
-<!-- Edit modal -->
 <div class="overlay-bg" id="modal-overlay" onclick="closeModal()"></div>
 <div class="modal" id="edit-modal">
   <h3>✏️ Editar casilla</h3>
   <label>Ícono (emoji)</label>
   <input type="text" id="edit-icon" maxlength="4" placeholder="ej: 🌊" />
   <label>Texto de la condición</label>
-  <input type="text" id="edit-text" maxlength="50" placeholder="ej: Pokémon brillante en caverna" />
+  <input type="text" id="edit-text" maxlength="50" placeholder="ej: Shiny en caverna" />
   <div class="modal-btns">
     <button class="save-btn" onclick="saveEdit()">Guardar</button>
     <button class="cancel-btn" onclick="closeModal()">Cancelar</button>
   </div>
 </div>
 
-<script>
-// ── Default cells data ──
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, onValue, set, update } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+const firebaseConfig = {
+  databaseURL: 'https://bingo-shiny-default-rtdb.firebaseio.com/'
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const ROOT = ref(db, 'bingo');
+
+// ── Default data ──
 const DEFAULT_CELLS = [
   { icon: '🐟', text: 'Shiny en surfear (agua)' },
   { icon: '🌿', text: 'Shiny en hierba alta' },
   { icon: '🏔️', text: 'Shiny en cueva' },
   { icon: '🎣', text: 'Shiny con caña de pescar' },
-
   { icon: '🔗', text: 'Shiny por Cadena DexNav' },
   { icon: '🥚', text: 'Shiny de huevo (Masuda)' },
   { icon: '✨', text: 'Shiny estático (legendario)' },
   { icon: '🏆', text: 'FREE', free: true },
-
   { icon: '🦋', text: 'Shiny no buscado (random)' },
-  { icon: '🌑', text: 'Shiny Pokémon de tipo Siniestro' },
+  { icon: '🌑', text: 'Shiny tipo Siniestro' },
   { icon: '🐉', text: 'Shiny tipo Dragón' },
   { icon: '💎', text: 'Shiny con habilidad oculta' },
-
   { icon: '🌊', text: 'Shiny en ruta de agua' },
   { icon: '🧬', text: 'Shiny tipo Fantasma' },
   { icon: '⚡', text: 'Shiny de primera evolución' },
   { icon: '🌸', text: 'Shiny en Safari / Área Especial' },
 ];
 
-let cells = JSON.parse(localStorage.getItem('bingo_cells') || 'null') || JSON.parse(JSON.stringify(DEFAULT_CELLS));
-let state = {
-  ruby: JSON.parse(localStorage.getItem('bingo_state_ruby') || 'null') || new Array(16).fill(false),
-  sapphire: JSON.parse(localStorage.getItem('bingo_state_sapphire') || 'null') || new Array(16).fill(false),
-};
-let names = JSON.parse(localStorage.getItem('bingo_names') || 'null') || { ruby: 'JUGADOR 1', sapphire: 'JUGADOR 2' };
-
-let editMode = false;
-let editTarget = null; // { index }
-
 const LINES = [
-  [0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15], // rows
-  [0,4,8,12],[1,5,9,13],[2,6,10,14],[3,7,11,15], // cols
-  [0,5,10,15],[3,6,9,12]                           // diagonals
+  [0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],
+  [0,4,8,12],[1,5,9,13],[2,6,10,14],[3,7,11,15],
+  [0,5,10,15],[3,6,9,12]
 ];
 
-function save() {
-  localStorage.setItem('bingo_cells', JSON.stringify(cells));
-  localStorage.setItem('bingo_state_ruby', JSON.stringify(state.ruby));
-  localStorage.setItem('bingo_state_sapphire', JSON.stringify(state.sapphire));
-  localStorage.setItem('bingo_names', JSON.stringify(names));
+let cells = DEFAULT_CELLS.map(c => ({...c}));
+let state = { ruby: new Array(16).fill(false), sapphire: new Array(16).fill(false) };
+let names = { ruby: 'JUGADOR 1', sapphire: 'JUGADOR 2' };
+let editMode = false;
+let editTarget = null;
+let prevBingoCount = { ruby: 0, sapphire: 0 };
+let isRemoteUpdate = false;
+
+// ── Sync indicator ──
+const dot = document.getElementById('sync-dot');
+const label = document.getElementById('sync-label');
+function setSyncStatus(status) {
+  dot.className = 'sync-dot ' + status;
+  if (status === 'online') label.textContent = 'Sincronizado ✓';
+  else if (status === 'syncing') label.textContent = 'Guardando...';
+  else if (status === 'error') label.textContent = 'Sin conexión';
+  else label.textContent = 'Conectando...';
 }
 
-function getBingoLines(stateArr) {
-  const lines = [];
-  for (const line of LINES) {
-    if (line.every(i => cells[i].free || stateArr[i])) lines.push(line);
+// ── Push to Firebase ──
+function pushData(path, value) {
+  setSyncStatus('syncing');
+  const r = ref(db, 'bingo/' + path);
+  set(r, value)
+    .then(() => setSyncStatus('online'))
+    .catch(() => setSyncStatus('error'));
+}
+
+// ── Listen for changes ──
+onValue(ROOT, (snapshot) => {
+  const data = snapshot.val();
+  setSyncStatus('online');
+  if (!data) {
+    // First time: init Firebase with defaults
+    set(ROOT, {
+      cells: cells,
+      state: { ruby: state.ruby, sapphire: state.sapphire },
+      names: names
+    });
+    return;
   }
-  return lines;
+  isRemoteUpdate = true;
+  if (data.cells) cells = data.cells;
+  if (data.state) {
+    if (data.state.ruby) state.ruby = data.state.ruby;
+    if (data.state.sapphire) state.sapphire = data.state.sapphire;
+  }
+  if (data.names) {
+    names = data.names;
+    document.getElementById('name-ruby').value = names.ruby || 'JUGADOR 1';
+    document.getElementById('name-sapphire').value = names.sapphire || 'JUGADOR 2';
+  }
+  render();
+  isRemoteUpdate = false;
+}, (error) => {
+  setSyncStatus('error');
+});
+
+// ── Bingo logic ──
+function getBingoLines(stateArr) {
+  return LINES.filter(line => line.every(i => cells[i] && cells[i].free || stateArr[i]));
 }
 
 function renderBoard(playerId) {
@@ -529,21 +402,15 @@ function renderBoard(playerId) {
 
     if (!cell.free) {
       div.addEventListener('click', () => {
-        if (editMode) {
-          openCellEdit(i);
-          return;
-        }
-        const wasChecked = stateArr[i];
+        if (editMode) { openCellEdit(i); return; }
+        const prevLines = getBingoLines(stateArr).length;
         stateArr[i] = !stateArr[i];
-        save();
+        const newLines = getBingoLines(stateArr).length;
+        pushData('state/' + playerId, stateArr);
         renderBoard(playerId);
         updateScore(playerId);
-        if (!wasChecked && stateArr[i]) {
-          const newLines = getBingoLines(stateArr);
-          if (newLines.length > 0) {
-            const prevLines = getBingoLines(stateArr.map((v,idx) => idx === i ? false : v));
-            if (newLines.length > prevLines.length) showBingo(playerId, newLines[newLines.length-1]);
-          }
+        if (stateArr[i] && newLines > prevLines) {
+          showBingo(playerId);
         }
       });
     }
@@ -553,94 +420,91 @@ function renderBoard(playerId) {
 }
 
 function updateScore(playerId) {
-  const count = state[playerId].filter((v,i) => v || cells[i].free).length;
+  const count = state[playerId].filter((v, i) => v || (cells[i] && cells[i].free)).length;
   document.getElementById('score-' + playerId).textContent = count + '/16';
 }
 
-function showBingo(playerId, line) {
+function showBingo(playerId) {
   const name = document.getElementById('name-' + playerId).value || (playerId === 'ruby' ? 'Jugador 1' : 'Jugador 2');
   document.getElementById('bingo-msg').textContent = `¡${name} completó una línea!`;
   document.getElementById('overlay').classList.add('show');
   document.getElementById('bingo-banner').classList.add('show');
 }
 
-function closeBanner() {
+window.closeBanner = () => {
   document.getElementById('overlay').classList.remove('show');
   document.getElementById('bingo-banner').classList.remove('show');
-}
-
-function resetAll() {
-  if (!confirm('¿Reiniciar el progreso de ambos tableros?')) return;
-  state.ruby = new Array(16).fill(false);
-  state.sapphire = new Array(16).fill(false);
-  save();
-  render();
-}
-
-function hardReset() {
-  cells = JSON.parse(JSON.stringify(DEFAULT_CELLS));
-  state.ruby = new Array(16).fill(false);
-  state.sapphire = new Array(16).fill(false);
-  save();
-  render();
-}
-
-// ── Edit mode ──
-function openEditMode() {
-  editMode = !editMode;
-  document.querySelector('[onclick="openEditMode()"]').textContent = editMode ? '✅ Salir de edición' : '✏️ Editar casillas';
-  document.querySelectorAll('.cell:not(.free)').forEach(c => {
-    c.style.outline = editMode ? '2px dashed #6666aa' : 'none';
-    c.style.cursor = editMode ? 'crosshair' : 'pointer';
-  });
-}
-
-function openCellEdit(index) {
-  editTarget = index;
-  document.getElementById('edit-icon').value = cells[index].icon;
-  document.getElementById('edit-text').value = cells[index].text;
-  document.getElementById('modal-overlay').classList.add('show');
-  document.getElementById('edit-modal').classList.add('show');
-}
-
-function saveEdit() {
-  if (editTarget === null) return;
-  const icon = document.getElementById('edit-icon').value.trim() || cells[editTarget].icon;
-  const text = document.getElementById('edit-text').value.trim();
-  if (!text) return;
-  cells[editTarget] = { icon, text };
-  save();
-  closeModal();
-  render();
-}
-
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('show');
-  document.getElementById('edit-modal').classList.remove('show');
-  editTarget = null;
-}
-
-// ── Name inputs ──
-function initNames() {
-  ['ruby', 'sapphire'].forEach(id => {
-    const inp = document.getElementById('name-' + id);
-    inp.value = names[id];
-    inp.addEventListener('change', () => {
-      names[id] = inp.value.toUpperCase();
-      inp.value = names[id];
-      save();
-    });
-    inp.addEventListener('keydown', e => { if (e.key === 'Enter') inp.blur(); });
-  });
-}
+};
 
 function render() {
   renderBoard('ruby');
   renderBoard('sapphire');
 }
 
-initNames();
-render();
+// ── Controls ──
+window.resetAll = () => {
+  if (!confirm('¿Reiniciar el progreso de ambos tableros?')) return;
+  state.ruby = new Array(16).fill(false);
+  state.sapphire = new Array(16).fill(false);
+  pushData('state', { ruby: state.ruby, sapphire: state.sapphire });
+  render();
+};
+
+window.hardReset = () => {
+  cells = DEFAULT_CELLS.map(c => ({...c}));
+  state.ruby = new Array(16).fill(false);
+  state.sapphire = new Array(16).fill(false);
+  set(ROOT, { cells, state, names });
+  render();
+};
+
+// ── Edit mode ──
+window.openEditMode = () => {
+  editMode = !editMode;
+  document.querySelector('[onclick="openEditMode()"]').textContent = editMode ? '✅ Salir de edición' : '✏️ Editar casillas';
+  document.querySelectorAll('.cell:not(.free)').forEach(c => {
+    c.style.outline = editMode ? '2px dashed #6666aa' : 'none';
+    c.style.cursor = editMode ? 'crosshair' : 'pointer';
+  });
+};
+
+window.openCellEdit = (index) => {
+  editTarget = index;
+  document.getElementById('edit-icon').value = cells[index].icon;
+  document.getElementById('edit-text').value = cells[index].text;
+  document.getElementById('modal-overlay').classList.add('show');
+  document.getElementById('edit-modal').classList.add('show');
+};
+
+window.saveEdit = () => {
+  if (editTarget === null) return;
+  const icon = document.getElementById('edit-icon').value.trim() || cells[editTarget].icon;
+  const text = document.getElementById('edit-text').value.trim();
+  if (!text) return;
+  cells[editTarget] = { icon, text };
+  pushData('cells', cells);
+  closeModal();
+  render();
+};
+
+window.closeModal = () => {
+  document.getElementById('modal-overlay').classList.remove('show');
+  document.getElementById('edit-modal').classList.remove('show');
+  editTarget = null;
+  if (editMode) openEditMode();
+};
+
+// ── Names ──
+['ruby', 'sapphire'].forEach(id => {
+  const inp = document.getElementById('name-' + id);
+  inp.addEventListener('change', () => {
+    names[id] = inp.value.toUpperCase();
+    inp.value = names[id];
+    pushData('names', names);
+  });
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') inp.blur(); });
+});
+
 </script>
 </body>
 </html>
