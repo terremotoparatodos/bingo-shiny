@@ -9,10 +9,8 @@
 
   :root {
     --ruby: #C1272D;
-    --ruby-dark: #7A0A0D;
     --ruby-light: #FF6B6B;
     --sapphire: #1565C0;
-    --sapphire-dark: #0A2F6B;
     --sapphire-light: #64B5F6;
     --gold: #FFD700;
     --shiny: #FFE066;
@@ -73,86 +71,43 @@
   .shiny-star { display: inline-block; color: var(--shiny); font-size: 20px; margin: 0 8px; animation: twinkle 1.8s infinite alternate; }
   @keyframes twinkle { from { opacity: 0.4; transform: scale(0.9); } to { opacity: 1; transform: scale(1.1); } }
 
-  /* sync indicator */
-  .sync-bar {
-    display: flex; align-items: center; justify-content: center;
-    gap: 8px; margin-bottom: 16px; font-size: 12px; color: var(--text-muted);
-  }
-  .sync-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: #555; transition: background 0.3s;
-  }
+  .sync-bar { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; font-size: 12px; color: var(--text-muted); }
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #555; transition: background 0.3s; }
   .sync-dot.online { background: #4caf50; box-shadow: 0 0 6px #4caf50; }
   .sync-dot.syncing { background: var(--gold); animation: pulse 0.6s infinite alternate; }
   .sync-dot.error { background: var(--ruby-light); }
   @keyframes pulse { from { opacity: 0.4; } to { opacity: 1; } }
 
-  .controls {
-    display: flex; gap: 10px; justify-content: center;
-    margin-bottom: 24px; flex-wrap: wrap;
-  }
-  .btn {
-    background: var(--surface2); border: 1px solid #333355;
-    color: var(--text); font-family: 'Nunito', sans-serif;
-    font-size: 13px; font-weight: 600; padding: 8px 18px;
-    border-radius: 8px; cursor: pointer; transition: all 0.15s; letter-spacing: 0.5px;
-  }
+  .controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap; }
+  .btn { background: var(--surface2); border: 1px solid #333355; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; padding: 8px 18px; border-radius: 8px; cursor: pointer; transition: all 0.15s; letter-spacing: 0.5px; }
   .btn:hover { background: #26264a; border-color: #6666aa; }
   .btn.danger { border-color: var(--ruby); color: var(--ruby-light); }
   .btn.danger:hover { background: rgba(193,39,45,0.15); }
 
   .boards { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
-
   .board-section { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 
-  .player-header {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 20px; border-radius: 12px; border: 2px solid;
-    width: 100%; justify-content: center; position: relative;
-  }
+  .player-header { display: flex; align-items: center; gap: 12px; padding: 10px 20px; border-radius: 12px; border: 2px solid; width: 100%; justify-content: center; }
   .player-header.ruby { background: rgba(193,39,45,0.15); border-color: var(--ruby); box-shadow: 0 0 20px rgba(193,39,45,0.2); }
   .player-header.sapphire { background: rgba(21,101,192,0.15); border-color: var(--sapphire); box-shadow: 0 0 20px rgba(21,101,192,0.2); }
 
-  .player-name-input {
-    font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px;
-    background: transparent; border: none; border-bottom: 1px dashed rgba(255,255,255,0.3);
-    color: inherit; text-align: center; outline: none; width: 140px;
-  }
+  .player-name-input { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; background: transparent; border: none; border-bottom: 1px dashed rgba(255,255,255,0.3); color: inherit; text-align: center; outline: none; width: 140px; }
   .ruby .player-name-input { color: var(--ruby-light); }
   .sapphire .player-name-input { color: var(--sapphire-light); }
 
-  .score-badge {
-    font-family: 'Bebas Neue', sans-serif; font-size: 20px;
-    padding: 2px 12px; border-radius: 20px; letter-spacing: 1px;
-  }
+  .score-badge { font-family: 'Bebas Neue', sans-serif; font-size: 20px; padding: 2px 12px; border-radius: 20px; letter-spacing: 1px; }
   .ruby .score-badge { background: var(--ruby); color: #fff; }
   .sapphire .score-badge { background: var(--sapphire); color: #fff; }
 
-  .bingo-grid {
-    display: grid;
-    grid-template-columns: repeat(4, var(--cell-size));
-    grid-template-rows: repeat(4, var(--cell-size));
-    gap: var(--cell-gap);
-  }
+  .bingo-grid { display: grid; grid-template-columns: repeat(4, var(--cell-size)); grid-template-rows: repeat(4, var(--cell-size)); gap: var(--cell-gap); }
 
-  .cell {
-    width: var(--cell-size); height: var(--cell-size);
-    background: var(--surface2); border: 1.5px solid #2a2a44;
-    border-radius: 10px; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; cursor: pointer;
-    transition: all 0.2s; padding: 6px; text-align: center;
-    position: relative; overflow: hidden; user-select: none;
-  }
+  .cell { width: var(--cell-size); height: var(--cell-size); background: var(--surface2); border: 1.5px solid #2a2a44; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; padding: 6px; text-align: center; position: relative; overflow: hidden; user-select: none; }
   .cell:hover { border-color: #5555aa; transform: scale(1.03); }
 
   .cell.checked-ruby { background: rgba(193,39,45,0.25); border-color: var(--ruby); box-shadow: inset 0 0 14px rgba(193,39,45,0.3); }
   .cell.checked-sapphire { background: rgba(21,101,192,0.25); border-color: var(--sapphire); box-shadow: inset 0 0 14px rgba(21,101,192,0.3); }
-  .cell.checked-ruby::after, .cell.checked-sapphire::after {
-    content: '✦'; position: absolute; top: 4px; right: 6px;
-    font-size: 14px; animation: pop 0.3s ease;
-  }
-  .cell.checked-ruby::after { color: var(--ruby-light); }
-  .cell.checked-sapphire::after { color: var(--sapphire-light); }
+  .cell.checked-ruby::after { content: '✦'; position: absolute; top: 4px; right: 6px; font-size: 14px; color: var(--ruby-light); animation: pop 0.3s ease; }
+  .cell.checked-sapphire::after { content: '✦'; position: absolute; top: 4px; right: 6px; font-size: 14px; color: var(--sapphire-light); animation: pop 0.3s ease; }
   @keyframes pop { from { transform: scale(0) rotate(-20deg); } to { transform: scale(1) rotate(0); } }
 
   .ruby-board .cell.bingo-line { animation: bingo-pulse-ruby 0.8s ease infinite alternate; }
@@ -169,30 +124,35 @@
   .cell.free .cell-icon { font-size: 30px; }
   .cell.free .cell-text { color: var(--gold); font-size: 11px; }
 
-  .bingo-banner {
-    display: none; position: fixed; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--surface); border: 3px solid var(--gold);
-    border-radius: 20px; padding: 30px 50px; text-align: center;
-    z-index: 100; box-shadow: 0 0 60px rgba(255,215,0,0.4);
-    animation: banner-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-  @keyframes banner-in { from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
-  .bingo-banner.show { display: block; }
-  .bingo-banner h2 { font-family: 'Bebas Neue', sans-serif; font-size: 72px; letter-spacing: 6px; color: var(--gold); line-height: 1; text-shadow: 0 0 30px rgba(255,215,0,0.6); }
-  .bingo-banner p { color: var(--text-muted); margin-top: 8px; font-size: 16px; }
-  .bingo-banner .close-btn { margin-top: 20px; padding: 10px 30px; font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; background: var(--gold); color: #000; border: none; border-radius: 10px; cursor: pointer; }
-
+  /* Bingo banner */
   .overlay-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 99; backdrop-filter: blur(2px); }
   .overlay-bg.show { display: block; }
 
-  .modal {
-    display: none; position: fixed; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--surface); border: 1.5px solid #3a3a5a;
-    border-radius: 16px; padding: 24px; z-index: 200; width: 340px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-  }
+  .bingo-banner { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 3px solid; border-radius: 20px; padding: 30px 50px; text-align: center; z-index: 100; }
+  .bingo-banner.show { display: block; animation: banner-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+  @keyframes banner-in { from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+
+  .bingo-banner.ruby-bingo { background: #1a0305; border-color: var(--ruby); box-shadow: 0 0 60px rgba(193,39,45,0.5); }
+  .bingo-banner.sapphire-bingo { background: #030a1a; border-color: var(--sapphire); box-shadow: 0 0 60px rgba(21,101,192,0.5); }
+
+  .bingo-banner h2 { font-family: 'Bebas Neue', sans-serif; font-size: 72px; letter-spacing: 6px; line-height: 1; }
+  .ruby-bingo h2 { color: var(--ruby-light); text-shadow: 0 0 30px rgba(193,39,45,0.8); }
+  .sapphire-bingo h2 { color: var(--sapphire-light); text-shadow: 0 0 30px rgba(21,101,192,0.8); }
+
+  .bingo-banner .bingo-sub { font-size: 16px; margin-top: 8px; }
+  .ruby-bingo .bingo-sub { color: rgba(255,107,107,0.7); }
+  .sapphire-bingo .bingo-sub { color: rgba(100,181,246,0.7); }
+
+  .bingo-banner .bingo-name { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 3px; margin-top: 4px; }
+  .ruby-bingo .bingo-name { color: var(--ruby-light); }
+  .sapphire-bingo .bingo-name { color: var(--sapphire-light); }
+
+  .bingo-banner .close-btn { margin-top: 20px; padding: 10px 30px; font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; border: none; border-radius: 10px; cursor: pointer; }
+  .ruby-bingo .close-btn { background: var(--ruby); color: #fff; }
+  .sapphire-bingo .close-btn { background: var(--sapphire); color: #fff; }
+
+  /* Edit modal */
+  .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--surface); border: 1.5px solid #3a3a5a; border-radius: 16px; padding: 24px; z-index: 200; width: 340px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
   .modal.show { display: block; }
   .modal h3 { font-size: 16px; margin-bottom: 16px; color: var(--text); font-weight: 700; }
   .modal label { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px; margin-top: 12px; text-transform: uppercase; letter-spacing: 1px; }
@@ -201,7 +161,6 @@
   .modal-btns { display: flex; gap: 8px; margin-top: 20px; }
   .modal-btns button { flex: 1; padding: 10px; border-radius: 8px; border: none; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; }
   .modal-btns .save-btn { background: #4f4faa; color: #fff; }
-  .modal-btns .save-btn:hover { background: #6666cc; }
   .modal-btns .cancel-btn { background: var(--surface2); color: var(--text); border: 1px solid #3a3a5a; }
 
   .legend { margin-top: 30px; background: var(--surface); border: 1px solid #2a2a44; border-radius: 12px; padding: 16px 24px; font-size: 12px; color: var(--text-muted); max-width: 500px; text-align: center; line-height: 2; }
@@ -216,7 +175,6 @@
 </head>
 <body>
 <div class="wrap">
-
   <div class="header">
     <h1><span class="shiny-star">✦</span> SHINY BINGO <span class="shiny-star">✦</span></h1>
     <p>Omega Ruby &nbsp;·&nbsp; Alpha Sapphire &nbsp;·&nbsp; Shiny Hunting</p>
@@ -241,7 +199,6 @@
       </div>
       <div class="bingo-grid ruby-board" id="board-ruby"></div>
     </div>
-
     <div class="board-section">
       <div class="player-header sapphire">
         <input class="player-name-input" id="name-sapphire" value="JUGADOR 2" maxlength="16" />
@@ -254,18 +211,20 @@
   <div class="legend">
     <strong>Click</strong> para marcar &nbsp;|&nbsp;
     <strong>Click de nuevo</strong> para desmarcar &nbsp;|&nbsp;
-    Línea completa = <strong>¡BINGO!</strong> &nbsp;|&nbsp;
-    Cambios sincronizados en tiempo real ✦
+    Línea completa = <strong>¡BINGO!</strong> para todos ✦
   </div>
 </div>
 
+<!-- Bingo popup -->
 <div class="overlay-bg" id="overlay" onclick="closeBanner()"></div>
 <div class="bingo-banner" id="bingo-banner">
   <h2>¡BINGO!</h2>
-  <p id="bingo-msg">¡Línea completada!</p>
+  <div class="bingo-name" id="bingo-name"></div>
+  <div class="bingo-sub">completó una línea</div>
   <button class="close-btn" onclick="closeBanner()">CERRAR</button>
 </div>
 
+<!-- Edit modal -->
 <div class="overlay-bg" id="modal-overlay" onclick="closeModal()"></div>
 <div class="modal" id="edit-modal">
   <h3>✏️ Editar casilla</h3>
@@ -279,20 +238,14 @@
   </div>
 </div>
 
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, onValue, set, update } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getDatabase, ref, onValue, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
-const firebaseConfig = {
-  databaseURL: 'https://bingo-shiny-default-rtdb.firebaseio.com/'
-};
-
-const app = initializeApp(firebaseConfig);
+const app = initializeApp({ databaseURL: 'https://bingo-shiny-default-rtdb.firebaseio.com/' });
 const db = getDatabase(app);
 const ROOT = ref(db, 'bingo');
 
-// ── Default data ──
 const DEFAULT_CELLS = [
   { icon: '🐟', text: 'Shiny en surfear (agua)' },
   { icon: '🌿', text: 'Shiny en hierba alta' },
@@ -321,45 +274,52 @@ const LINES = [
 let cells = DEFAULT_CELLS.map(c => ({...c}));
 let state = { ruby: new Array(16).fill(false), sapphire: new Array(16).fill(false) };
 let names = { ruby: 'JUGADOR 1', sapphire: 'JUGADOR 2' };
+let bingo = { active: false, player: null, ts: 0 };
 let editMode = false;
 let editTarget = null;
-let prevBingoCount = { ruby: 0, sapphire: 0 };
-let isRemoteUpdate = false;
+let lastBingoTs = 0;
 
-// ── Sync indicator ──
+// ── Sync UI ──
 const dot = document.getElementById('sync-dot');
 const label = document.getElementById('sync-label');
-function setSyncStatus(status) {
-  dot.className = 'sync-dot ' + status;
-  if (status === 'online') label.textContent = 'Sincronizado ✓';
-  else if (status === 'syncing') label.textContent = 'Guardando...';
-  else if (status === 'error') label.textContent = 'Sin conexión';
-  else label.textContent = 'Conectando...';
+function setSyncStatus(s) {
+  dot.className = 'sync-dot ' + s;
+  label.textContent = s === 'online' ? 'Sincronizado ✓' : s === 'syncing' ? 'Guardando...' : s === 'error' ? 'Sin conexión' : 'Conectando...';
 }
 
-// ── Push to Firebase ──
 function pushData(path, value) {
   setSyncStatus('syncing');
-  const r = ref(db, 'bingo/' + path);
-  set(r, value)
+  set(ref(db, 'bingo/' + path), value)
     .then(() => setSyncStatus('online'))
     .catch(() => setSyncStatus('error'));
 }
 
-// ── Listen for changes ──
+// ── Bingo popup ──
+function showBanner(player) {
+  const name = names[player] || (player === 'ruby' ? 'JUGADOR 1' : 'JUGADOR 2');
+  const banner = document.getElementById('bingo-banner');
+  banner.className = 'bingo-banner ' + player + '-bingo show';
+  document.getElementById('bingo-name').textContent = name;
+  document.getElementById('overlay').classList.add('show');
+}
+
+window.closeBanner = () => {
+  // Al cerrar, limpiamos el bingo en Firebase para que no reaparezca
+  pushData('bingo', { active: false, player: null, ts: lastBingoTs });
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('bingo-banner').className = 'bingo-banner';
+};
+
+// ── Firebase listener ──
 onValue(ROOT, (snapshot) => {
   const data = snapshot.val();
   setSyncStatus('online');
+
   if (!data) {
-    // First time: init Firebase with defaults
-    set(ROOT, {
-      cells: cells,
-      state: { ruby: state.ruby, sapphire: state.sapphire },
-      names: names
-    });
+    set(ROOT, { cells, state, names, bingo: { active: false, player: null, ts: 0 } });
     return;
   }
-  isRemoteUpdate = true;
+
   if (data.cells) cells = data.cells;
   if (data.state) {
     if (data.state.ruby) state.ruby = data.state.ruby;
@@ -370,15 +330,23 @@ onValue(ROOT, (snapshot) => {
     document.getElementById('name-ruby').value = names.ruby || 'JUGADOR 1';
     document.getElementById('name-sapphire').value = names.sapphire || 'JUGADOR 2';
   }
-  render();
-  isRemoteUpdate = false;
-}, (error) => {
-  setSyncStatus('error');
-});
 
-// ── Bingo logic ──
+  // Bingo remoto: mostrar popup si es nuevo
+  if (data.bingo && data.bingo.active && data.bingo.ts !== lastBingoTs) {
+    lastBingoTs = data.bingo.ts;
+    showBanner(data.bingo.player);
+  } else if (data.bingo && !data.bingo.active) {
+    // Cerrar si alguien cerró desde otro dispositivo
+    document.getElementById('overlay').classList.remove('show');
+    document.getElementById('bingo-banner').className = 'bingo-banner';
+  }
+
+  render();
+}, () => setSyncStatus('error'));
+
+// ── Board logic ──
 function getBingoLines(stateArr) {
-  return LINES.filter(line => line.every(i => cells[i] && cells[i].free || stateArr[i]));
+  return LINES.filter(line => line.every(i => (cells[i] && cells[i].free) || stateArr[i]));
 }
 
 function renderBoard(playerId) {
@@ -397,7 +365,6 @@ function renderBoard(playerId) {
       if (stateArr[i]) div.classList.add('checked-' + playerId);
       if (bingoSet.has(i) && stateArr[i]) div.classList.add('bingo-line');
     }
-
     div.innerHTML = `<div class="cell-icon">${cell.icon}</div><div class="cell-text">${cell.text}</div>`;
 
     if (!cell.free) {
@@ -409,8 +376,12 @@ function renderBoard(playerId) {
         pushData('state/' + playerId, stateArr);
         renderBoard(playerId);
         updateScore(playerId);
+        // Si se completa una línea nueva, disparar bingo en Firebase
         if (stateArr[i] && newLines > prevLines) {
-          showBingo(playerId);
+          const ts = Date.now();
+          lastBingoTs = ts;
+          pushData('bingo', { active: true, player: playerId, ts });
+          showBanner(playerId);
         }
       });
     }
@@ -424,18 +395,6 @@ function updateScore(playerId) {
   document.getElementById('score-' + playerId).textContent = count + '/16';
 }
 
-function showBingo(playerId) {
-  const name = document.getElementById('name-' + playerId).value || (playerId === 'ruby' ? 'Jugador 1' : 'Jugador 2');
-  document.getElementById('bingo-msg').textContent = `¡${name} completó una línea!`;
-  document.getElementById('overlay').classList.add('show');
-  document.getElementById('bingo-banner').classList.add('show');
-}
-
-window.closeBanner = () => {
-  document.getElementById('overlay').classList.remove('show');
-  document.getElementById('bingo-banner').classList.remove('show');
-};
-
 function render() {
   renderBoard('ruby');
   renderBoard('sapphire');
@@ -446,7 +405,8 @@ window.resetAll = () => {
   if (!confirm('¿Reiniciar el progreso de ambos tableros?')) return;
   state.ruby = new Array(16).fill(false);
   state.sapphire = new Array(16).fill(false);
-  pushData('state', { ruby: state.ruby, sapphire: state.sapphire });
+  set(ref(db, 'bingo/state'), state);
+  set(ref(db, 'bingo/bingo'), { active: false, player: null, ts: 0 });
   render();
 };
 
@@ -454,11 +414,10 @@ window.hardReset = () => {
   cells = DEFAULT_CELLS.map(c => ({...c}));
   state.ruby = new Array(16).fill(false);
   state.sapphire = new Array(16).fill(false);
-  set(ROOT, { cells, state, names });
+  set(ROOT, { cells, state, names, bingo: { active: false, player: null, ts: 0 } });
   render();
 };
 
-// ── Edit mode ──
 window.openEditMode = () => {
   editMode = !editMode;
   document.querySelector('[onclick="openEditMode()"]').textContent = editMode ? '✅ Salir de edición' : '✏️ Editar casillas';
@@ -494,7 +453,6 @@ window.closeModal = () => {
   if (editMode) openEditMode();
 };
 
-// ── Names ──
 ['ruby', 'sapphire'].forEach(id => {
   const inp = document.getElementById('name-' + id);
   inp.addEventListener('change', () => {
@@ -504,7 +462,6 @@ window.closeModal = () => {
   });
   inp.addEventListener('keydown', e => { if (e.key === 'Enter') inp.blur(); });
 });
-
 </script>
 </body>
 </html>
