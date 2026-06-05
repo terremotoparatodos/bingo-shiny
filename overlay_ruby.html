@@ -9,7 +9,7 @@
 
   body {
     width:1920px; height:1080px; overflow:hidden;
-    background:transparent;
+    background:#08080f;
     font-family:'Nunito',sans-serif; color:#f0f0ff;
     position:relative;
   }
@@ -55,7 +55,7 @@
   #name-tag {
     padding:10px 18px; flex-shrink:0;
     border-top:1px solid rgba(193,39,45,.4);
-    background:rgba(8,8,15,.88); backdrop-filter:blur(4px);
+    background:#08080f;
     display:flex; align-items:center; gap:10px; pointer-events:none;
   }
   .dot { width:10px; height:10px; border-radius:50%; background:#C1272D; box-shadow:0 0 8px #C1272D; flex-shrink:0; }
@@ -66,7 +66,7 @@
     position:absolute;
     top:636px; left:20px; right:20px; bottom:20px;
     border:2px solid rgba(193,39,45,.4); border-radius:12px;
-    background:rgba(8,8,15,.88); backdrop-filter:blur(6px);
+    background:#08080f;
     box-shadow:0 0 24px rgba(193,39,45,.15);
     padding:10px 14px;
     display:flex; flex-direction:column; gap:6px;
@@ -176,7 +176,7 @@ const app = initializeApp({ databaseURL: 'https://bingo-shiny-default-rtdb.fireb
 const db = getDatabase(app);
 
 const BASE = '/bingo-shiny/img/';
-const IMGS = { bug:'bug.png', dark:'dark.png', dragon:'dragon.png', electric:'electric.png', fairy:'fairy.png', fighting:'fighting.png', fire:'fire.png', flying:'flying.png', ghost:'ghost.png', grass:'grass.png', ground:'ground.png', ice:'ice.png', normal:'normal.png', poison:'poison.png', psychic:'psychic.png', rock:'rock.png', steel:'steel.png', water:'water.png', mt:'mt.png', potion:'potion.png', mountain:'mountain.png', cave:'cave.png', sea:'sea.png', forest:'forest.png', mewtwo:'mewtwo.png', mew:'mew.png', zapdos:'zapdos.png', pokeball:'pokeball.png' };
+const IMGS = { bug:'bug.png', dark:'dark.png', dragon:'dragon.png', electric:'electric.png', fairy:'fairy.png', fighting:'fighting.png', fire:'fire.png', flying:'flying.png', ghost:'safari.png', grass:'grass.png', ground:'ground.png', ice:'ice.png', normal:'normal.png', poison:'poison.png', psychic:'psychic.png', rock:'rock.png', steel:'steel.png', water:'water.png', mt:'mt.png', potion:'potion.png', mountain:'mountain.png', cave:'cave.png', sea:'sea.png', forest:'forest.png', mewtwo:'mewtwo.png', mew:'mew.png', zapdos:'zapdos.png', pokeball:'pokeball.png' };
 const src = function(k) { return BASE + (IMGS[k] || 'normal.png'); };
 
 const LINES = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],[0,4,8,12],[1,5,9,13],[2,6,10,14],[3,7,11,15],[0,5,10,15],[3,6,9,12]];
