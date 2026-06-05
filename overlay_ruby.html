@@ -32,9 +32,9 @@
   .bcell.free { background:linear-gradient(135deg,rgba(255,215,0,.2),rgba(255,215,0,.04)); border-color:#FFD700; }
   .bcell.checked { border-color:#C1272D; background:rgba(193,39,45,.2); box-shadow:inset 0 0 10px rgba(193,39,45,.2); }
   .bcell.bingo-line { animation:bpulse .9s ease infinite alternate; }
-  @keyframes bpulse { from { box-shadow:inset 0 0 8px rgba(193,39,45,.2); } to { box-shadow:inset 0 0 20px rgba(193,39,45,.2), 0 0 12px #C1272D; } }
+  @keyframes bpulse { from { box-shadow:inset 0 0 8px rgba(193,39,45,.2); } to { box-shadow:inset 0 0 20px rgba(193,39,45,.5), 0 0 12px #C1272D; } }
   .bcell.checked::after { content:'✦'; position:absolute; top:2px; right:3px; font-size:8px; color:#FF6B6B; animation:pop .3s ease; }
-  @keyframes pop { from{transform:scale(0) rotate(-20deg);}to{transform:scale(1) rotate(0);} }
+  @keyframes pop { from { transform:scale(0) rotate(-20deg); } to { transform:scale(1) rotate(0); } }
   .bcell-img { width:28px; height:28px; object-fit:contain; display:block; margin-bottom:2px; }
   .bcell-img.lg { width:32px; height:32px; }
   .bcell-img.pb { width:24px; height:24px; image-rendering:pixelated; }
@@ -61,7 +61,6 @@
   </div>
   <div class="bingo-grid" id="bingo-grid"></div>
 </div>
-
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
@@ -113,9 +112,7 @@ function render() {
       const isPokeball = cell.imgKey === 'pokeball';
       const cls = isLegend ? 'lg' : isPokeball ? 'pb' : '';
       const imgClass = 'bcell-img' + (cls ? ' ' + cls : '');
-      const imgEl = '<img class="' + imgClass + '" src="' + src(cell.imgKey) + '" alt="" onerror="this.style.display='none'"/>';
-      const txtEl = '<div class="bcell-text">' + cell.text + '</div>';
-      div.innerHTML = imgEl + txtEl;
+      div.innerHTML = '<img class="' + imgClass + '" src="' + src(cell.imgKey) + '" alt="" onerror="this.style.display=\'none\'"/><div class="bcell-text">' + cell.text + '</div>';
     }
     grid.appendChild(div);
   });
@@ -128,12 +125,9 @@ onValue(ref(db, 'bingo'), (snap) => {
   if (!data) return;
   if (data.cells) cells = data.cells;
   if (data.state && data.state[PLAYER]) playerState = data.state[PLAYER];
-  if (data.names && data.names[PLAYER]) {
-    document.getElementById('player-name').textContent = data.names[PLAYER];
-  }
+  if (data.names && data.names[PLAYER]) document.getElementById('player-name').textContent = data.names[PLAYER];
   render();
 });
 </script>
-
 </body>
 </html>
