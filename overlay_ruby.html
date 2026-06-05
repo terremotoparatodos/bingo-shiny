@@ -14,47 +14,139 @@
     position:relative;
   }
 
+  /* ── Fondo animado ── */
   #bg {
     position:absolute; inset:0; z-index:0; pointer-events:none;
     background:
-      radial-gradient(ellipse 900px 600px at 28% 32%, rgba(193,39,45,.13) 0%, transparent 70%),
-      radial-gradient(ellipse 600px 300px at 75% 85%, rgba(193,39,45,.07) 0%, transparent 70%);
+      radial-gradient(ellipse 1200px 700px at 50% 50%, rgba(80,10,15,.9) 0%, #08080f 70%);
   }
-  #bg::after {
-    content:''; position:absolute; inset:0; pointer-events:none;
+
+  /* Ondas de color animadas */
+  #waves {
+    position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+  }
+  .wave {
+    position:absolute; border-radius:50%;
+    background:radial-gradient(circle, rgba(193,39,45,.18) 0%, transparent 70%);
+    animation:wavePulse linear infinite;
+  }
+  .wave:nth-child(1) { width:600px; height:600px; top:-100px; left:-150px; animation-duration:8s; animation-delay:0s; }
+  .wave:nth-child(2) { width:400px; height:400px; top:400px; left:1600px; animation-duration:10s; animation-delay:-3s; }
+  .wave:nth-child(3) { width:500px; height:500px; top:700px; left:800px; animation-duration:12s; animation-delay:-6s; }
+  .wave:nth-child(4) { width:300px; height:300px; top:100px; left:1200px; animation-duration:9s; animation-delay:-2s; }
+  @keyframes wavePulse {
+    0%   { transform:scale(1);   opacity:.6; }
+    50%  { transform:scale(1.3); opacity:1;  }
+    100% { transform:scale(1);   opacity:.6; }
+  }
+
+  /* Pokéballs flotantes */
+  #balls { position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+  .pball {
+    position:absolute;
+    width:28px; height:28px;
+    border-radius:50%;
+    border:2px solid rgba(193,39,45,.4);
+    background:linear-gradient(180deg, rgba(193,39,45,.25) 50%, rgba(20,20,40,.25) 50%);
+    animation:floatBall linear infinite;
+    opacity:0;
+  }
+  .pball::after {
+    content:''; position:absolute; top:50%; left:0; right:0;
+    height:2px; background:rgba(193,39,45,.4); transform:translateY(-50%);
+  }
+  .pball::before {
+    content:''; position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    width:8px; height:8px; border-radius:50%;
+    border:2px solid rgba(193,39,45,.5);
+    background:rgba(20,20,40,.6);
+  }
+  @keyframes floatBall {
+    0%   { transform:translateY(1100px) rotate(0deg);   opacity:0; }
+    5%   { opacity:.7; }
+    95%  { opacity:.4; }
+    100% { transform:translateY(-100px) rotate(360deg); opacity:0; }
+  }
+  /* Posiciones y tiempos variados */
+  .pball:nth-child(1)  { left:5%;   animation-duration:14s; animation-delay:0s;    width:20px; height:20px; }
+  .pball:nth-child(2)  { left:12%;  animation-duration:18s; animation-delay:-4s;   width:32px; height:32px; }
+  .pball:nth-child(3)  { left:20%;  animation-duration:12s; animation-delay:-8s;   width:16px; height:16px; }
+  .pball:nth-child(4)  { left:30%;  animation-duration:20s; animation-delay:-2s;   width:24px; height:24px; }
+  .pball:nth-child(5)  { left:42%;  animation-duration:15s; animation-delay:-11s;  width:18px; height:18px; }
+  .pball:nth-child(6)  { left:55%;  animation-duration:17s; animation-delay:-5s;   width:28px; height:28px; }
+  .pball:nth-child(7)  { left:65%;  animation-duration:13s; animation-delay:-9s;   width:22px; height:22px; }
+  .pball:nth-child(8)  { left:75%;  animation-duration:19s; animation-delay:-1s;   width:14px; height:14px; }
+  .pball:nth-child(9)  { left:85%;  animation-duration:16s; animation-delay:-7s;   width:30px; height:30px; }
+  .pball:nth-child(10) { left:93%;  animation-duration:11s; animation-delay:-3s;   width:20px; height:20px; }
+
+  /* Destellos tipo sparkle */
+  #sparkles { position:absolute; inset:0; z-index:0; pointer-events:none; }
+  .spark {
+    position:absolute; width:3px; height:3px; border-radius:50%;
+    background:#C1272D; animation:sparkle ease-in-out infinite;
+  }
+  @keyframes sparkle {
+    0%,100% { transform:scale(0); opacity:0; }
+    50%      { transform:scale(1); opacity:.8; }
+  }
+  .spark:nth-child(1)  { top:8%;  left:3%;  animation-duration:3s;  animation-delay:0s;    background:#FF6B6B; }
+  .spark:nth-child(2)  { top:15%; left:18%; animation-duration:4s;  animation-delay:-1s; }
+  .spark:nth-child(3)  { top:5%;  left:40%; animation-duration:2.5s;animation-delay:-2s;   background:#FFD700; }
+  .spark:nth-child(4)  { top:20%; left:60%; animation-duration:3.5s;animation-delay:-.5s; }
+  .spark:nth-child(5)  { top:10%; left:80%; animation-duration:4s;  animation-delay:-3s;   background:#FF6B6B; }
+  .spark:nth-child(6)  { top:70%; left:5%;  animation-duration:3s;  animation-delay:-1.5s; }
+  .spark:nth-child(7)  { top:80%; left:25%; animation-duration:2s;  animation-delay:0s;    background:#FFD700; }
+  .spark:nth-child(8)  { top:75%; left:50%; animation-duration:3.5s;animation-delay:-2.5s; }
+  .spark:nth-child(9)  { top:85%; left:70%; animation-duration:4.5s;animation-delay:-1s; }
+  .spark:nth-child(10) { top:65%; left:90%; animation-duration:3s;  animation-delay:-3s;   background:#FF6B6B; }
+
+  /* Scanlines */
+  #scan {
+    position:absolute; inset:0; z-index:0; pointer-events:none;
     background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);
   }
 
-  .edge { position:absolute; z-index:10; pointer-events:none; background:#C1272D; opacity:.55; }
+  /* ── Accent edges ── */
+  .edge { position:absolute; z-index:10; pointer-events:none; background:#C1272D; opacity:.7; }
   .edge.top    { top:0; left:0; right:0; height:3px; }
   .edge.bottom { bottom:0; left:0; right:0; height:3px; }
   .edge.left   { left:0; top:0; bottom:0; width:3px; }
   .edge.right  { right:0; top:0; bottom:0; width:3px; }
+  /* Esquinas brillantes */
+  .corner { position:absolute; z-index:11; pointer-events:none; }
+  .corner.tl { top:0; left:0; width:20px; height:20px; border-top:3px solid #FF6B6B; border-left:3px solid #FF6B6B; }
+  .corner.tr { top:0; right:0; width:20px; height:20px; border-top:3px solid #FF6B6B; border-right:3px solid #FF6B6B; }
+  .corner.bl { bottom:0; left:0; width:20px; height:20px; border-bottom:3px solid #FF6B6B; border-left:3px solid #FF6B6B; }
+  .corner.br { bottom:0; right:0; width:20px; height:20px; border-bottom:3px solid #FF6B6B; border-right:3px solid #FF6B6B; }
 
   /* ── TOP ── */
   #top {
     position:absolute; top:20px; left:20px; right:20px; height:600px;
-    display:grid; grid-template-columns:1005px 1fr; gap:16px; z-index:1;
+    display:grid; grid-template-columns:1005px 1fr; gap:16px; z-index:2;
   }
 
+  /* 3DS — transparente */
   #ds-frame {
     width:1005px; height:599px;
     border:3px solid #C1272D; border-radius:10px;
-    box-shadow:0 0 28px rgba(193,39,45,.35), 0 0 0 1px rgba(193,39,45,.2);
+    box-shadow:0 0 28px rgba(193,39,45,.5), 0 0 0 1px rgba(193,39,45,.2);
     align-self:center; background:transparent; pointer-events:none;
   }
 
+  /* Cam — transparente */
   #cam-frame {
-    border:2px solid rgba(193,39,45,.5); border-radius:10px;
-    box-shadow:0 0 20px rgba(193,39,45,.2);
+    border:2px solid rgba(193,39,45,.6); border-radius:10px;
+    box-shadow:0 0 20px rgba(193,39,45,.3);
     display:flex; flex-direction:column; align-self:stretch;
     background:transparent; pointer-events:none;
   }
   #cam-inner { flex:1; background:transparent; }
 
+  /* Name tag — sólido */
   #name-tag {
     padding:10px 18px; flex-shrink:0;
-    border-top:1px solid rgba(193,39,45,.4);
+    border-top:1px solid rgba(193,39,45,.5);
     background:#08080f;
     display:flex; align-items:center; gap:10px; pointer-events:none;
   }
@@ -65,31 +157,40 @@
   #bottom {
     position:absolute;
     top:636px; left:20px; right:20px; bottom:20px;
-    border:2px solid rgba(193,39,45,.4); border-radius:12px;
+    border:2px solid rgba(193,39,45,.5); border-radius:12px;
     background:#08080f;
-    box-shadow:0 0 24px rgba(193,39,45,.15);
+    box-shadow:0 0 24px rgba(193,39,45,.2), inset 0 0 40px rgba(80,10,15,.5);
     padding:10px 14px;
     display:flex; flex-direction:column; gap:6px;
     z-index:2; pointer-events:none;
+    overflow:hidden;
+  }
+  /* Mini shimmer dentro del bingo */
+  #bottom::before {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(ellipse 800px 150px at 50% 100%, rgba(193,39,45,.08) 0%, transparent 70%);
+    animation:bingoShimmer 6s ease-in-out infinite alternate;
+  }
+  @keyframes bingoShimmer {
+    from { opacity:.5; transform:translateX(-100px); }
+    to   { opacity:1;  transform:translateX(100px); }
   }
 
-  .bingo-header { display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
-  .bingo-label { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:3px; color:rgba(255,255,255,.3); }
-  .bingo-score { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:1px; padding:2px 14px; border-radius:20px; background:#C1272D; color:#fff; }
+  .bingo-header { display:flex; align-items:center; justify-content:space-between; flex-shrink:0; position:relative; z-index:1; }
+  .bingo-label { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:3px; color:rgba(255,255,255,.35); }
+  .bingo-score { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:1px; padding:2px 14px; border-radius:20px; background:#C1272D; color:#fff; box-shadow:0 0 10px rgba(193,39,45,.5); }
 
-  /* Grid 4x4 */
   .bingo-grid {
     flex:1; min-height:0;
     display:grid;
     grid-template-columns:repeat(4,1fr);
     grid-template-rows:repeat(4,1fr);
     gap:5px;
+    position:relative; z-index:1;
   }
 
-  /* Cada celda: texto izquierda, imagen derecha */
   .bcell {
-    border-radius:8px;
-    border:1.5px solid #2a2a44;
+    border-radius:8px; border:1.5px solid #2a2a44;
     background:#0e0e20;
     display:flex; flex-direction:row;
     align-items:center; justify-content:space-between;
@@ -98,17 +199,13 @@
     transition:border-color .3s, background .3s, box-shadow .3s;
     gap:6px;
   }
-
-  /* FREE es especial: centrado vertical */
   .bcell.free {
     flex-direction:column; justify-content:center; align-items:center;
     background:linear-gradient(135deg,rgba(255,215,0,.18),rgba(255,215,0,.04));
-    border-color:#FFD700;
-    padding:6px;
+    border-color:#FFD700; padding:6px;
   }
   .bcell.checked {
-    border-color:#C1272D;
-    background:rgba(193,39,45,.22);
+    border-color:#C1272D; background:rgba(193,39,45,.22);
     box-shadow:inset 0 0 14px rgba(193,39,45,.3);
   }
   .bcell.bingo-line { animation:bpulse .9s ease infinite alternate; }
@@ -116,38 +213,47 @@
     from { box-shadow:inset 0 0 8px rgba(193,39,45,.25); }
     to   { box-shadow:inset 0 0 22px rgba(193,39,45,.6), 0 0 10px #C1272D; }
   }
-  .bcell.checked::after {
-    content:'✦'; position:absolute; top:3px; right:4px;
-    font-size:9px; color:#FF6B6B;
-  }
+  .bcell.checked::after { content:'✦'; position:absolute; top:3px; right:4px; font-size:9px; color:#FF6B6B; }
 
-  /* Texto — ocupa el espacio disponible a la izquierda */
-  .bcell-text {
-    font-size:17px; font-weight:700; line-height:1.3; color:#ccccee;
-    flex:1; text-align:left;
-  }
+  .bcell-text { font-size:17px; font-weight:700; line-height:1.3; color:#ccccee; flex:1; text-align:left; }
   .bcell.free .bcell-text { color:#FFD700; font-size:13px; font-weight:800; text-align:center; }
   .bcell.checked .bcell-text { color:#fff; }
 
-  /* Imagen — fija a la derecha */
-  .bcell-img {
-    width:44px; height:44px;
-    object-fit:contain; display:block; flex-shrink:0;
-  }
+  .bcell-img { width:44px; height:44px; object-fit:contain; display:block; flex-shrink:0; }
   .bcell-img.lg { width:50px; height:50px; }
   .bcell-img.pb { width:36px; height:36px; image-rendering:pixelated; }
-
   .free-trophy { font-size:26px; margin-bottom:2px; }
 </style>
 </head>
 <body>
 
+<!-- Fondo animado -->
 <div id="bg"></div>
-<div class="edge top"></div>
-<div class="edge bottom"></div>
-<div class="edge left"></div>
-<div class="edge right"></div>
+<div id="waves">
+  <div class="wave"></div><div class="wave"></div>
+  <div class="wave"></div><div class="wave"></div>
+</div>
+<div id="balls">
+  <div class="pball"></div><div class="pball"></div><div class="pball"></div>
+  <div class="pball"></div><div class="pball"></div><div class="pball"></div>
+  <div class="pball"></div><div class="pball"></div><div class="pball"></div>
+  <div class="pball"></div>
+</div>
+<div id="sparkles">
+  <div class="spark"></div><div class="spark"></div><div class="spark"></div>
+  <div class="spark"></div><div class="spark"></div><div class="spark"></div>
+  <div class="spark"></div><div class="spark"></div><div class="spark"></div>
+  <div class="spark"></div>
+</div>
+<div id="scan"></div>
 
+<!-- Bordes -->
+<div class="edge top"></div><div class="edge bottom"></div>
+<div class="edge left"></div><div class="edge right"></div>
+<div class="corner tl"></div><div class="corner tr"></div>
+<div class="corner bl"></div><div class="corner br"></div>
+
+<!-- Top -->
 <div id="top">
   <div id="ds-frame"></div>
   <div id="cam-frame">
@@ -159,6 +265,7 @@
   </div>
 </div>
 
+<!-- Bingo -->
 <div id="bottom">
   <div class="bingo-header">
     <div class="bingo-label">BINGO POK&#201;MON</div>
@@ -180,22 +287,18 @@ const IMGS = { bug:'bug.png', dark:'dark.png', dragon:'dragon.png', electric:'el
 const src = function(k) { return BASE + (IMGS[k] || 'normal.png'); };
 
 const LINES = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],[0,4,8,12],[1,5,9,13],[2,6,10,14],[3,7,11,15],[0,5,10,15],[3,6,9,12]];
-
 var cells = [];
 var playerState = [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false];
 
 function getBingoLines() {
   return LINES.filter(function(l) {
-    return l.every(function(i) {
-      return (cells[i] && cells[i].kind === 'free') || playerState[i];
-    });
+    return l.every(function(i) { return (cells[i] && cells[i].kind === 'free') || playerState[i]; });
   });
 }
 
 function makeCell(cell, i, bingoSet) {
   var div = document.createElement('div');
   div.className = 'bcell';
-
   if (cell.kind === 'free') {
     div.classList.add('free');
     var trophy = document.createElement('div');
@@ -209,21 +312,17 @@ function makeCell(cell, i, bingoSet) {
   } else {
     if (playerState[i]) { div.classList.add('checked'); }
     if (bingoSet.has(i) && playerState[i]) { div.classList.add('bingo-line'); }
-
     var txt = document.createElement('div');
     txt.className = 'bcell-text';
     txt.textContent = cell.text;
-
     var imgCls = 'bcell-img';
     if (cell.kind === 'capture' && cell.imgKey !== 'pokeball') { imgCls += ' lg'; }
     if (cell.imgKey === 'pokeball') { imgCls += ' pb'; }
-
     var img = document.createElement('img');
     img.className = imgCls;
     img.src = src(cell.imgKey);
     img.alt = '';
     img.addEventListener('error', function() { this.style.display = 'none'; });
-
     div.appendChild(txt);
     div.appendChild(img);
   }
@@ -236,15 +335,9 @@ function render() {
   var bingoLines = getBingoLines();
   var bingoSet = new Set();
   bingoLines.forEach(function(l) { l.forEach(function(i) { bingoSet.add(i); }); });
-
   grid.innerHTML = '';
-  cells.forEach(function(cell, i) {
-    grid.appendChild(makeCell(cell, i, bingoSet));
-  });
-
-  var count = playerState.filter(function(v, i) {
-    return v || (cells[i] && cells[i].kind === 'free');
-  }).length;
+  cells.forEach(function(cell, i) { grid.appendChild(makeCell(cell, i, bingoSet)); });
+  var count = playerState.filter(function(v, i) { return v || (cells[i] && cells[i].kind === 'free'); }).length;
   document.getElementById('bingo-score').textContent = count + '/16';
 }
 
