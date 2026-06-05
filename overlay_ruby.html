@@ -6,62 +6,24 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@700;800&display=swap');
   * { box-sizing:border-box; margin:0; padding:0; }
-  body {
-    width:1920px; height:1080px; overflow:hidden;
-    background:#08080f; font-family:'Nunito',sans-serif;
-    color:#f0f0ff; position:relative;
-  }
-  #bg {
-    position:absolute; inset:0; z-index:0;
-    background:radial-gradient(ellipse 900px 600px at 28% 32%, rgba(193,39,45,.2) 0%, transparent 70%), #08080f;
-  }
-  #bg::after {
-    content:''; position:absolute; inset:0; pointer-events:none;
-    background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.05) 3px,rgba(0,0,0,.05) 4px);
-  }
+  body { width:1920px; height:1080px; overflow:hidden; background:#08080f; font-family:'Nunito',sans-serif; color:#f0f0ff; position:relative; }
+  #bg { position:absolute; inset:0; z-index:0; background:radial-gradient(ellipse 900px 600px at 28% 32%, rgba(193,39,45,.2) 0%, transparent 70%), #08080f; }
+  #bg::after { content:''; position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.05) 3px,rgba(0,0,0,.05) 4px); }
   .edge { position:absolute; z-index:4; pointer-events:none; background:#C1272D; opacity:.6; }
   .edge.top    { top:0; left:0; right:0; height:3px; }
   .edge.bottom { bottom:0; left:0; right:0; height:3px; }
   .edge.left   { left:0; top:0; bottom:0; width:3px; }
   .edge.right  { right:0; top:0; bottom:0; width:3px; }
-  #top {
-    position:absolute; top:20px; left:20px; right:20px; height:600px;
-    display:grid; grid-template-columns:1005px 1fr; gap:16px; z-index:1;
-  }
-  #ds-frame {
-    width:1005px; height:599px;
-    border:3px solid #C1272D; border-radius:10px; overflow:hidden;
-    box-shadow:0 0 32px rgba(193,39,45,.2), inset 0 0 0 1px rgba(255,255,255,.04);
-    align-self:center;
-  }
-  #ds-screen {
-    width:100%; height:100%;
-    background:#5cb87a;
-    background-image:repeating-linear-gradient(0deg,transparent,transparent 5px,rgba(0,0,0,.07) 5px,rgba(0,0,0,.07) 6px);
-  }
-  #cam-frame {
-    border:2px solid rgba(193,39,45,.4); border-radius:10px; overflow:hidden;
-    background:rgba(0,0,0,.5); box-shadow:0 0 20px rgba(193,39,45,.2);
-    display:flex; flex-direction:column; align-self:stretch; position:relative;
-  }
+  #top { position:absolute; top:20px; left:20px; right:20px; height:600px; display:grid; grid-template-columns:1005px 1fr; gap:16px; z-index:1; }
+  #ds-frame { width:1005px; height:599px; border:3px solid #C1272D; border-radius:10px; overflow:hidden; box-shadow:0 0 32px rgba(193,39,45,.2); align-self:center; }
+  #ds-screen { width:100%; height:100%; background:#5cb87a; background-image:repeating-linear-gradient(0deg,transparent,transparent 5px,rgba(0,0,0,.07) 5px,rgba(0,0,0,.07) 6px); }
+  #cam-frame { border:2px solid rgba(193,39,45,.4); border-radius:10px; overflow:hidden; background:rgba(0,0,0,.5); box-shadow:0 0 20px rgba(193,39,45,.2); display:flex; flex-direction:column; align-self:stretch; }
   #cam-inner { flex:1; position:relative; }
-  #cam-inner::after {
-    content:'WEBCAM'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-    font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:3px; color:rgba(255,255,255,.07);
-  }
-  #name-tag {
-    padding:10px 18px; flex-shrink:0;
-    border-top:1px solid rgba(193,39,45,.4); background:rgba(0,0,0,.4);
-    display:flex; align-items:center; gap:10px;
-  }
+  #cam-inner::after { content:'WEBCAM'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:3px; color:rgba(255,255,255,.07); }
+  #name-tag { padding:10px 18px; flex-shrink:0; border-top:1px solid rgba(193,39,45,.4); background:rgba(0,0,0,.4); display:flex; align-items:center; gap:10px; }
   .dot { width:10px; height:10px; border-radius:50%; background:#C1272D; box-shadow:0 0 8px #C1272D; flex-shrink:0; }
   #player-name { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:2px; color:#FF6B6B; }
-  #bottom {
-    position:absolute; top:636px; left:20px; right:20px; bottom:20px;
-    border:2px solid rgba(193,39,45,.4); border-radius:10px;
-    background:rgba(0,0,0,.3); box-shadow:0 0 20px rgba(193,39,45,.2);
-    padding:10px; display:flex; flex-direction:column; gap:6px; z-index:1;
-  }
+  #bottom { position:absolute; top:636px; left:20px; right:20px; bottom:20px; border:2px solid rgba(193,39,45,.4); border-radius:10px; background:rgba(0,0,0,.3); box-shadow:0 0 20px rgba(193,39,45,.2); padding:10px; display:flex; flex-direction:column; gap:6px; z-index:1; }
   .bingo-header { display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
   .bingo-label { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:3px; color:rgba(255,255,255,.3); }
   .bingo-score { font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:1px; padding:2px 12px; border-radius:20px; background:#C1272D; color:#fff; }
@@ -85,7 +47,6 @@
 <div id="bg"></div>
 <div class="edge top"></div><div class="edge bottom"></div>
 <div class="edge left"></div><div class="edge right"></div>
-
 <div id="top">
   <div id="ds-frame"><div id="ds-screen"></div></div>
   <div id="cam-frame">
@@ -93,7 +54,6 @@
     <div id="name-tag"><div class="dot"></div><div id="player-name">JUGADOR 1</div></div>
   </div>
 </div>
-
 <div id="bottom">
   <div class="bingo-header">
     <div class="bingo-label">BINGO POKÉMON</div>
@@ -111,10 +71,22 @@ const app = initializeApp({ databaseURL:'https://bingo-shiny-default-rtdb.fireba
 const db  = getDatabase(app);
 
 const BASE = '/bingo-shiny/img/';
-const IMGS = {bug:'bug.png',dark:'dark.png',dragon:'dragon.png',electric:'electric.png',fairy:'fairy.png',fighting:'fighting.png',fire:'fire.png',flying:'flying.png',ghost:'ghost.png',grass:'grass.png',ground:'ground.png',ice:'ice.png',normal:'normal.png',poison:'poison.png',psychic:'psychic.png',rock:'rock.png',steel:'steel.png',water:'water.png',mt:'mt.png',potion:'potion.png',mountain:'mountain.png',cave:'cave.png',sea:'sea.png',forest:'forest.png',mewtwo:'mewtwo.png',mew:'mew.png',zapdos:'zapdos.png',pokeball:'pokeball.png'};
+const IMGS = {
+  bug:'bug.png',dark:'dark.png',dragon:'dragon.png',electric:'electric.png',
+  fairy:'fairy.png',fighting:'fighting.png',fire:'fire.png',flying:'flying.png',
+  ghost:'ghost.png',grass:'grass.png',ground:'ground.png',ice:'ice.png',
+  normal:'normal.png',poison:'poison.png',psychic:'psychic.png',rock:'rock.png',
+  steel:'steel.png',water:'water.png',mt:'mt.png',potion:'potion.png',
+  mountain:'mountain.png',cave:'cave.png',sea:'sea.png',forest:'forest.png',
+  mewtwo:'mewtwo.png',mew:'mew.png',zapdos:'zapdos.png',pokeball:'pokeball.png'
+};
 const src = k => BASE + (IMGS[k] || 'normal.png');
 
-const LINES = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],[0,4,8,12],[1,5,9,13],[2,6,10,14],[3,7,11,15],[0,5,10,15],[3,6,9,12]];
+const LINES = [
+  [0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],
+  [0,4,8,12],[1,5,9,13],[2,6,10,14],[3,7,11,15],
+  [0,5,10,15],[3,6,9,12]
+];
 
 let cells = [];
 let playerState = new Array(16).fill(false);
@@ -140,7 +112,10 @@ function render() {
       const isLegend   = cell.kind === 'capture' && cell.imgKey !== 'pokeball';
       const isPokeball = cell.imgKey === 'pokeball';
       const cls = isLegend ? 'lg' : isPokeball ? 'pb' : '';
-      div.innerHTML = '<img class="bcell-img' + (cls ? ' ' + cls : '') + '" src="' + src(cell.imgKey) + '" alt="" onerror="this.style.display='none'"/><div class="bcell-text">' + cell.text + '</div>';
+      const imgClass = 'bcell-img' + (cls ? ' ' + cls : '');
+      const imgEl = '<img class="' + imgClass + '" src="' + src(cell.imgKey) + '" alt="" onerror="this.style.display='none'"/>';
+      const txtEl = '<div class="bcell-text">' + cell.text + '</div>';
+      div.innerHTML = imgEl + txtEl;
     }
     grid.appendChild(div);
   });
@@ -153,9 +128,12 @@ onValue(ref(db, 'bingo'), (snap) => {
   if (!data) return;
   if (data.cells) cells = data.cells;
   if (data.state && data.state[PLAYER]) playerState = data.state[PLAYER];
-  if (data.names && data.names[PLAYER]) document.getElementById('player-name').textContent = data.names[PLAYER];
+  if (data.names && data.names[PLAYER]) {
+    document.getElementById('player-name').textContent = data.names[PLAYER];
+  }
   render();
 });
 </script>
+
 </body>
 </html>
