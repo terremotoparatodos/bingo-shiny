@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bingo Pokémon – OR/AS</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700&display=swap');
+  :root {
+    --ruby:#C1272D; --ruby-light:#FF6B6B;
+    --sapphire:#1565C0; --sapphire-light:#64B5F6;
+    --gold:#FFD700; --shiny:#FFE066;
+    --bg:#0a0a12; --surface:#12121e; --surface2:#1c1c2e;
+    --text:#f0f0ff; --text-muted:#8888aa;
+    --cell-size:118px; --cell-gap:6px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);font-family:'Nunito',sans-serif;color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 10px 40px;}
+  body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,.4) 0%,transparent 100%),radial-gradient(1px 1px at 30% 40%,rgba(255,255,255,.3) 0%,transparent 100%),radial-gradient(1px 1px at 55% 20%,rgba(255,255,255,.5) 0%,transparent 100%),radial-gradient(1px 1px at 70% 70%,rgba(255,255,255,.3) 0%,transparent 100%),radial-gradient(1px 1px at 85% 35%,rgba(255,255,255,.4) 0%,transparent 100%),radial-gradient(1px 1px at 20% 75%,rgba(255,255,255,.3) 0%,transparent 100%),radial-gradient(1px 1px at 90% 85%,rgba(255,255,255,.4) 0%,transparent 100%),radial-gradient(1px 1px at 45% 90%,rgba(255,255,255,.3) 0%,transparent 100%);pointer-events:none;z-index:0;}
+  .wrap{position:relative;z-index:1;width:100%;max-width:1200px;}
+  .header{text-align:center;margin-bottom:22px;}
+  .header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,6vw,64px);letter-spacing:4px;background:linear-gradient(135deg,var(--ruby-light) 0%,var(--gold) 50%,var(--sapphire-light) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:6px;}
+  .header p{font-size:13px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;}
+  .shiny-star{display:inline-block;color:var(--shiny);font-size:20px;margin:0 8px;animation:twinkle 1.8s infinite alternate;}
+  @keyframes twinkle{from{opacity:.4;transform:scale(.9);}to{opacity:1;transform:scale(1.1);}}
+  .sync-bar{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;font-size:12px;color:var(--text-muted);}
+  .sync-dot{width:8px;height:8px;border-radius:50%;background:#555;transition:background .3s;}
+  .sync-dot.online{background:#4caf50;box-shadow:0 0 6px #4caf50;}
+  .sync-dot.syncing{background:var(--gold);animation:pulse .6s infinite alternate;}
+  .sync-dot.error{background:var(--ruby-light);}
+  @keyframes pulse{from{opacity:.4;}to{opacity:1;}}
+  .controls{display:flex;gap:10px;justify-content:center;margin-bottom:20px;flex-wrap:wrap;}
+  .btn{background:var(--surface2);border:1px solid #333355;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;padding:8px 18px;border-radius:8px;cursor:pointer;transition:all .15s;letter-spacing:.5px;}
+  .btn:hover{background:#26264a;border-color:#6666aa;}
+  .btn.danger{border-color:var(--ruby);color:var(--ruby-light);}
+  .btn.danger:hover{background:rgba(193,39,45,.15);}
+  .boards{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;}
+  .board-section{display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .player-header{display:flex;align-items:center;gap:12px;padding:10px 20px;border-radius:12px;border:2px solid;width:100%;justify-content:center;}
+  .player-header.ruby{background:rgba(193,39,45,.15);border-color:var(--ruby);box-shadow:0 0 20px rgba(193,39,45,.2);}
+  .player-header.sapphire{background:rgba(21,101,192,.15);border-color:var(--sapphire);box-shadow:0 0 20px rgba(21,101,192,.2);}
+  .player-name-input{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;background:transparent;border:none;border-bottom:1px dashed rgba(255,255,255,.3);color:inherit;text-align:center;outline:none;width:140px;}
+  .ruby .player-name-input{color:var(--ruby-light);}
+  .sapphire .player-name-input{color:var(--sapphire-light);}
+  .score-badge{font-family:'Bebas Neue',sans-serif;font-size:20px;padding:2px 12px;border-radius:20px;letter-spacing:1px;}
+  .ruby .score-badge{background:var(--ruby);color:#fff;}
+  .sapphire .score-badge{background:var(--sapphire);color:#fff;}
+  .bingo-grid{display:grid;grid-template-columns:repeat(4,var(--cell-size));grid-template-rows:repeat(4,var(--cell-size));gap:var(--cell-gap);}
+  .cell{width:var(--cell-size);height:var(--cell-size);background:var(--surface2);border:1.5px solid #2a2a44;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;padding:5px;text-align:center;position:relative;overflow:hidden;user-select:none;}
+  .cell:hover:not(.free){border-color:#5555aa;transform:scale(1.03);}
+  .cell-img{width:54px;height:54px;object-fit:contain;margin-bottom:3px;display:block;}
+  .cell-img.lg{width:60px;height:60px;}
+  .cell-img.pb{width:48px;height:48px;image-rendering:pixelated;}
+  .cell-text{font-size:9px;font-weight:700;line-height:1.3;color:var(--text);}
+  .cell-badge{position:absolute;top:3px;left:4px;font-size:7.5px;font-weight:700;padding:1px 4px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;opacity:.9;}
+  .b-shiny  {background:rgba(180,140,255,.35);color:#ddbbff;}
+  .b-place  {background:rgba(30,140,30,.4);color:#99ee99;}
+  .b-mt     {background:rgba(190,120,0,.4);color:#ffcc66;}
+  .b-item   {background:rgba(200,40,150,.4);color:#ff99dd;}
+  .b-capture{background:rgba(220,60,60,.4);color:#ffaaaa;}
+  .cell.checked-ruby{background:rgba(193,39,45,.25);border-color:var(--ruby);box-shadow:inset 0 0 14px rgba(193,39,45,.3);}
+  .cell.checked-sapphire{background:rgba(21,101,192,.25);border-color:var(--sapphire);box-shadow:inset 0 0 14px rgba(21,101,192,.3);}
+  .cell.checked-ruby::after,.cell.checked-sapphire::after{content:'✦';position:absolute;top:3px;right:5px;font-size:13px;animation:pop .3s ease;}
+  .cell.checked-ruby::after{color:var(--ruby-light);}
+  .cell.checked-sapphire::after{color:var(--sapphire-light);}
+  @keyframes pop{from{transform:scale(0) rotate(-20deg);}to{transform:scale(1) rotate(0);}}
+  .ruby-board .cell.bingo-line{animation:b-ruby .8s ease infinite alternate;}
+  .sapphire-board .cell.bingo-line{animation:b-sapphire .8s ease infinite alternate;}
+  @keyframes b-ruby{from{box-shadow:inset 0 0 14px rgba(193,39,45,.3);}to{box-shadow:inset 0 0 28px rgba(193,39,45,.7),0 0 16px rgba(193,39,45,.5);}}
+  @keyframes b-sapphire{from{box-shadow:inset 0 0 14px rgba(21,101,192,.3);}to{box-shadow:inset 0 0 28px rgba(21,101,192,.7),0 0 16px rgba(21,101,192,.5);}}
+  .cell.free{background:linear-gradient(135deg,rgba(255,215,0,.18),rgba(255,215,0,.04));border-color:var(--gold);cursor:default;}
+  .cell.free .cell-text{color:var(--gold);font-size:12px;font-weight:800;}
+  .overlay-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;backdrop-filter:blur(2px);}
+  .overlay-bg.show{display:block;}
+  .bingo-banner{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);border:3px solid;border-radius:20px;padding:30px 50px;text-align:center;z-index:100;}
+  .bingo-banner.show{display:block;animation:ban-in .4s cubic-bezier(.175,.885,.32,1.275);}
+  @keyframes ban-in{from{transform:translate(-50%,-50%) scale(.5);opacity:0;}to{transform:translate(-50%,-50%) scale(1);opacity:1;}}
+  .bingo-banner.ruby-bingo{background:#1a0305;border-color:var(--ruby);box-shadow:0 0 60px rgba(193,39,45,.5);}
+  .bingo-banner.sapphire-bingo{background:#030a1a;border-color:var(--sapphire);box-shadow:0 0 60px rgba(21,101,192,.5);}
+  .bingo-banner h2{font-family:'Bebas Neue',sans-serif;font-size:72px;letter-spacing:6px;line-height:1;}
+  .ruby-bingo h2{color:var(--ruby-light);text-shadow:0 0 30px rgba(193,39,45,.8);}
+  .sapphire-bingo h2{color:var(--sapphire-light);text-shadow:0 0 30px rgba(21,101,192,.8);}
+  .bingo-name{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;margin-top:4px;}
+  .ruby-bingo .bingo-name{color:var(--ruby-light);}
+  .sapphire-bingo .bingo-name{color:var(--sapphire-light);}
+  .bingo-sub{font-size:15px;margin-top:6px;color:var(--text-muted);}
+  .bingo-banner .close-btn{margin-top:20px;padding:10px 30px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;border:none;border-radius:10px;cursor:pointer;}
+  .ruby-bingo .close-btn{background:var(--ruby);color:#fff;}
+  .sapphire-bingo .close-btn{background:var(--sapphire);color:#fff;}
+  .modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface);border:1.5px solid #3a3a5a;border-radius:16px;padding:24px;z-index:200;width:340px;box-shadow:0 20px 60px rgba(0,0,0,.6);}
+  .modal.show{display:block;}
+  .modal h3{font-size:16px;margin-bottom:16px;font-weight:700;}
+  .modal label{font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px;margin-top:12px;text-transform:uppercase;letter-spacing:1px;}
+  .modal input,.modal select{width:100%;background:var(--bg);border:1px solid #3a3a5a;color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;padding:8px 12px;border-radius:8px;outline:none;}
+  .modal input:focus,.modal select:focus{border-color:#6666aa;}
+  .modal-btns{display:flex;gap:8px;margin-top:20px;}
+  .modal-btns button{flex:1;padding:10px;border-radius:8px;border:none;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;}
+  .modal-btns .save-btn{background:#4f4faa;color:#fff;}
+  .modal-btns .cancel-btn{background:var(--surface2);color:var(--text);border:1px solid #3a3a5a;}
+  .legend-bar{margin-top:24px;background:var(--surface);border:1px solid #2a2a44;border-radius:12px;padding:14px 20px;font-size:11px;color:var(--text-muted);max-width:520px;text-align:center;line-height:2;}
+  .legend-bar strong{color:var(--text);}
+  @media(max-width:640px){:root{--cell-size:84px;} .cell-img{width:36px;height:36px;} .cell-text{font-size:7px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1><span class="shiny-star">✦</span> BINGO POKÉMON <span class="shiny-star">✦</span></h1>
+    <p>Omega Ruby &nbsp;·&nbsp; Alpha Sapphire</p>
+  </div>
+  <div class="sync-bar"><div class="sync-dot" id="sync-dot"></div><span id="sync-label">Conectando...</span></div>
+  <div class="controls">
+    <button class="btn" onclick="openEditMode()">✏️ Editar casillas</button>
+    <button class="btn" onclick="resetProgress()">↺ Nuevo juego</button>
+    <button class="btn danger" onclick="if(confirm('¿Resetear TODO incluyendo casillas?')) hardReset()">🗑 Resetear todo</button>
+  </div>
+  <div class="boards">
+    <div class="board-section">
+      <div class="player-header ruby">
+        <input class="player-name-input" id="name-ruby" value="JUGADOR 1" maxlength="16"/>
+        <span class="score-badge" id="score-ruby">0/16</span>
+      </div>
+      <div class="bingo-grid ruby-board" id="board-ruby"></div>
+    </div>
+    <div class="board-section">
+      <div class="player-header sapphire">
+        <input class="player-name-input" id="name-sapphire" value="JUGADOR 2" maxlength="16"/>
+        <span class="score-badge" id="score-sapphire">0/16</span>
+      </div>
+      <div class="bingo-grid sapphire-board" id="board-sapphire"></div>
+    </div>
+  </div>
+  <div class="legend-bar">
+    <strong>Click</strong> para marcar &nbsp;|&nbsp; <strong>Click de nuevo</strong> para desmarcar &nbsp;|&nbsp; Línea completa = <strong>¡BINGO!</strong> para todos ✦
+  </div>
+</div>
+
+<div class="overlay-bg" id="overlay" onclick="closeBanner()"></div>
+<div class="bingo-banner" id="bingo-banner">
+  <h2>¡BINGO!</h2>
+  <div class="bingo-name" id="bingo-name"></div>
+  <div class="bingo-sub">completó una línea</div>
+  <button class="close-btn" onclick="closeBanner()">CERRAR</button>
+</div>
+
+<div class="overlay-bg" id="modal-overlay" onclick="closeModal()"></div>
+<div class="modal" id="edit-modal">
+  <h3>✏️ Editar casilla</h3>
+  <label>Categoría</label>
+  <select id="edit-kind" onchange="updateImgOptions()">
+    <option value="shiny">Shiny (tipo)</option>
+    <option value="place">Lugar</option>
+    <option value="mt">MT</option>
+    <option value="item">Objeto</option>
+    <option value="capture">Captura</option>
+  </select>
+  <label>Imagen</label>
+  <select id="edit-img-key"></select>
+  <label>Texto</label>
+  <input type="text" id="edit-text" maxlength="60"/>
+  <div class="modal-btns">
+    <button class="save-btn" onclick="saveEdit()">Guardar</button>
+    <button class="cancel-btn" onclick="closeModal()">Cancelar</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, onValue, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+const app  = initializeApp({ databaseURL: 'https://bingo-shiny-default-rtdb.firebaseio.com/' });
+const db   = getDatabase(app);
+const ROOT = ref(db, 'bingo');
+
+const BASE = '/bingo-shiny/img/';
+const IMGS = {
+  bug:'bug.png',dark:'dark.png',dragon:'dragon.png',electric:'electric.png',
+  fairy:'fairy.png',fighting:'fighting.png',fire:'fire.png',flying:'flying.png',
+  ghost:'ghost.png',grass:'grass.png',ground:'ground.png',ice:'ice.png',
+  normal:'normal.png',poison:'poison.png',psychic:'psychic.png',rock:'rock.png',
+  steel:'steel.png',water:'water.png',
+  mt:'mt.png',potion:'potion.png',
+  mountain:'mountain.png',cave:'cave.png',sea:'sea.png',forest:'forest.png',
+  mewtwo:'mewtwo.png',mew:'mew.png',zapdos:'zapdos.png',
+  pokeball:'pokeball.png',
+};
+const src = k => BASE + (IMGS[k] || 'normal.png');
+
+const TYPE_KEYS  = ['bug','dark','dragon','electric','fairy','fighting','fire','flying','ghost','grass','ground','ice','normal','poison','psychic','rock','steel','water'];
+const TYPE_NAMES = {bug:'Bicho',dark:'Siniestro',dragon:'Dragón',electric:'Eléctrico',fairy:'Hada',fighting:'Lucha',fire:'Fuego',flying:'Volador',ghost:'Fantasma',grass:'Planta',ground:'Tierra',ice:'Hielo',normal:'Normal',poison:'Veneno',psychic:'Psíquico',rock:'Roca',steel:'Acero',water:'Agua'};
+const PLACE_KEYS  = ['mountain','cave','sea','forest','normal','ghost'];
+const PLACE_NAMES = {mountain:'Montaña',cave:'Cueva',sea:'Agua',forest:'Bosque',normal:'Ruta',ghost:'Safari Zone'};
+const MT_CATS = ['Física','Especial','Estado'];
+
+// Habilidades de OR/AS (Hoenn)
+const ABILITIES = [
+  'Absorbe Lluvia','Acumulación','Adaptación','Afinidad Bruta','Agallas','Altanería',
+  'Anticipación','Armadura','Azar','Bola de Nieve','Buceo Libre','Caparazón',
+  'Clorofila','Cola Escudo','Compás','Curación Natural','Defensista','Devorador',
+  'Dominio','Escudo Polvo','Espacio Mágico','Esporas','Flexibilidad','Foco Interno',
+  'Fuerza Bruta','Gigantismo','Hervor','Hidratación','Humedad','Hiper Cutter',
+  'Hustle','Ilusión','Impasible','Impulso','Iniciativa','Instinto','Intimidación',
+  'Llovizna','Luz Solar','Madrugador','Mar de Fuego','Niebla','Ojo Compuesto',
+  'Pararrayos','Pelo Estático','Picadura','Placaje','Polvo Veneno','Potencia',
+  'Presencia','Quema Seca','Rampage','Reflejo','Resina','Rivalidad',
+  'Robustez','Roca Dura','Sequía','Sereno','Sin Dormir','Sincronía',
+  'Sonambulismo','Sube Marea','Tegumento','Temblor','Tenacidad','Tormenta Arena',
+  'Trance','Traición','Velocidad','Vigor','Vitalidad','Volatilidad','Voracidad',
+];
+
+const LEGEND_POOL = [
+  {imgKey:'mewtwo', text:'Capturá un Legendario Mayor'},
+  {imgKey:'zapdos', text:'Capturá un Legendario Menor'},
+  {imgKey:'mew',    text:'Capturá un Mítico o Singular'},
+];
+
+const IMG_OPTIONS = {
+  shiny:   TYPE_KEYS.map(k=>({key:k,label:TYPE_NAMES[k]})),
+  place:   PLACE_KEYS.map(k=>({key:k,label:PLACE_NAMES[k]})),
+  mt:      [{key:'mt',label:'MT (CD)'}],
+  item:    [{key:'potion',label:'Objeto curativo'}],
+  capture: [{key:'mewtwo',label:'Legendario Mayor (Mewtwo)'},{key:'zapdos',label:'Legendario Menor (Zapdos)'},{key:'mew',label:'Mítico/Singular (Mew)'},{key:'pokeball',label:'Habilidad especial'}],
+};
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+
+function buildDefaults(){
+  const types  = shuffle(TYPE_KEYS).slice(0,5);
+  const places = shuffle(PLACE_KEYS).slice(0,6);
+  const legend = pick(LEGEND_POOL);
+  const ability = pick(ABILITIES);
+
+  const pool = [
+    ...types.map(t=>({kind:'shiny',   imgKey:t,           text:'Capturá un Shiny de tipo '+TYPE_NAMES[t]})),
+    ...places.map(p=>({kind:'place',  imgKey:p,           text:'Capturá un Shiny en '+PLACE_NAMES[p]})),
+    {kind:'mt',      imgKey:'mt',      text:'Encontrá una MT '+pick(MT_CATS)},
+    {kind:'mt',      imgKey:'mt',      text:'Encontrá una MT '+pick(MT_CATS)},
+    {kind:'item',    imgKey:'potion',  text:'Encontrá un Objeto Curativo'},
+    {kind:'capture', imgKey:legend.imgKey, text:legend.text},
+    {kind:'capture', imgKey:'pokeball',   text:'Conseguí un Pokémon con la habilidad '+ability},
+  ];
+
+  // 16 casillas: 15 pool + FREE en posición 7
+  const shuffled = shuffle(pool);
+  shuffled.splice(7, 0, {kind:'free', imgKey:'', text:'FREE'});
+  return shuffled;
+}
+
+const LINES = [
+  [0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],
+  [0,4,8,12],[1,5,9,13],[2,6,10,14],[3,7,11,15],
+  [0,5,10,15],[3,6,9,12]
+];
+
+let cells = buildDefaults();
+let state = {ruby:new Array(16).fill(false),sapphire:new Array(16).fill(false)};
+let names = {ruby:'JUGADOR 1',sapphire:'JUGADOR 2'};
+let lastBingoTs = 0;
+let editMode = false;
+let editTarget = null;
+
+const dot = document.getElementById('sync-dot');
+const lbl = document.getElementById('sync-label');
+function setSyncStatus(s){
+  dot.className='sync-dot '+s;
+  lbl.textContent=s==='online'?'Sincronizado ✓':s==='syncing'?'Guardando...':s==='error'?'Sin conexión':'Conectando...';
+}
+function pushData(path,value){
+  setSyncStatus('syncing');
+  set(ref(db,'bingo/'+path),value).then(()=>setSyncStatus('online')).catch(()=>setSyncStatus('error'));
+}
+
+onValue(ROOT,(snap)=>{
+  setSyncStatus('online');
+  const data=snap.val();
+  if(!data){set(ROOT,{cells,state,names,bingo:{active:false,player:null,ts:0}});return;}
+  if(data.cells)   cells=data.cells;
+  if(data.state){
+    if(data.state.ruby)     state.ruby=data.state.ruby;
+    if(data.state.sapphire) state.sapphire=data.state.sapphire;
+  }
+  if(data.names){
+    names=data.names;
+    document.getElementById('name-ruby').value=names.ruby||'JUGADOR 1';
+    document.getElementById('name-sapphire').value=names.sapphire||'JUGADOR 2';
+  }
+  if(data.bingo&&data.bingo.active&&data.bingo.ts!==lastBingoTs){
+    lastBingoTs=data.bingo.ts;
+    showBanner(data.bingo.player);
+  } else if(data.bingo&&!data.bingo.active){
+    document.getElementById('overlay').classList.remove('show');
+    document.getElementById('bingo-banner').className='bingo-banner';
+  }
+  render();
+},()=>setSyncStatus('error'));
+
+function getBingoLines(sa){return LINES.filter(l=>l.every(i=>(cells[i]&&cells[i].kind==='free')||sa[i]));}
+
+const BADGE={shiny:['b-shiny','Shiny'],place:['b-place','Lugar'],mt:['b-mt','MT'],item:['b-item','Objeto'],capture:['b-capture','Captura']};
+
+function renderBoard(pid){
+  const grid=document.getElementById('board-'+pid);
+  const sa=state[pid];
+  const bingoSet=new Set(getBingoLines(sa).flat());
+  grid.innerHTML='';
+  cells.forEach((cell,i)=>{
+    const div=document.createElement('div');
+    div.className='cell';
+    if(cell.kind==='free'){
+      div.classList.add('free');
+      div.innerHTML='<div style="font-size:30px;margin-bottom:2px">🏆</div><div class="cell-text">FREE</div>';
+    } else {
+      if(sa[i]) div.classList.add('checked-'+pid);
+      if(bingoSet.has(i)&&sa[i]) div.classList.add('bingo-line');
+      const [bc,bl]=BADGE[cell.kind]||['b-shiny',''];
+      const isLegend = cell.kind==='capture' && cell.imgKey!=='pokeball';
+      const isPokeball = cell.imgKey==='pokeball';
+      const cls = isLegend?'lg':isPokeball?'pb':'';
+      div.innerHTML=`<span class="cell-badge ${bc}">${bl}</span><img class="cell-img${cls?' '+cls:''}" src="${src(cell.imgKey)}" alt="" onerror="this.style.display='none'"/><div class="cell-text">${cell.text}</div>`;
+      div.addEventListener('click',()=>{
+        if(editMode){openCellEdit(i);return;}
+        const prev=getBingoLines(sa).length;
+        sa[i]=!sa[i];
+        const next=getBingoLines(sa).length;
+        pushData('state/'+pid,sa);
+        renderBoard(pid);
+        updateScore(pid);
+        if(sa[i]&&next>prev){
+          const ts=Date.now();
+          lastBingoTs=ts;
+          pushData('bingo',{active:true,player:pid,ts});
+          showBanner(pid);
+        }
+      });
+    }
+    grid.appendChild(div);
+  });
+  updateScore(pid);
+}
+
+function updateScore(pid){
+  const c=state[pid].filter((v,i)=>v||(cells[i]&&cells[i].kind==='free')).length;
+  document.getElementById('score-'+pid).textContent=c+'/16';
+}
+function render(){renderBoard('ruby');renderBoard('sapphire');}
+
+function showBanner(player){
+  const name=document.getElementById('name-'+player).value||(player==='ruby'?'JUGADOR 1':'JUGADOR 2');
+  const banner=document.getElementById('bingo-banner');
+  banner.className='bingo-banner '+player+'-bingo show';
+  document.getElementById('bingo-name').textContent=name;
+  document.getElementById('overlay').classList.add('show');
+}
+window.closeBanner=()=>{
+  pushData('bingo',{active:false,player:null,ts:lastBingoTs});
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('bingo-banner').className='bingo-banner';
+};
+
+window.resetProgress=()=>{
+  if(!confirm('¿Reiniciar el progreso de ambos tableros?')) return;
+  state={ruby:new Array(16).fill(false),sapphire:new Array(16).fill(false)};
+  set(ref(db,'bingo/state'),state);
+  set(ref(db,'bingo/bingo'),{active:false,player:null,ts:0});
+  render();
+};
+window.hardReset=()=>{
+  cells=buildDefaults();
+  state={ruby:new Array(16).fill(false),sapphire:new Array(16).fill(false)};
+  set(ROOT,{cells,state,names,bingo:{active:false,player:null,ts:0}});
+  render();
+};
+
+window.openEditMode=()=>{
+  editMode=!editMode;
+  document.querySelector('[onclick="openEditMode()"]').textContent=editMode?'✅ Salir de edición':'✏️ Editar casillas';
+  document.querySelectorAll('.cell:not(.free)').forEach(c=>{c.style.outline=editMode?'2px dashed #6666aa':'none';c.style.cursor=editMode?'crosshair':'pointer';});
+};
+window.updateImgOptions=()=>{
+  const kind=document.getElementById('edit-kind').value;
+  const sel=document.getElementById('edit-img-key');
+  sel.innerHTML=(IMG_OPTIONS[kind]||IMG_OPTIONS.shiny).map(o=>`<option value="${o.key}">${o.label}</option>`).join('');
+};
+window.openCellEdit=(i)=>{
+  editTarget=i;
+  const c=cells[i];
+  document.getElementById('edit-kind').value=c.kind||'shiny';
+  updateImgOptions();
+  document.getElementById('edit-img-key').value=c.imgKey||'fire';
+  document.getElementById('edit-text').value=c.text||'';
+  document.getElementById('modal-overlay').classList.add('show');
+  document.getElementById('edit-modal').classList.add('show');
+};
+window.saveEdit=()=>{
+  if(editTarget===null) return;
+  const kind=document.getElementById('edit-kind').value;
+  const imgKey=document.getElementById('edit-img-key').value;
+  const text=document.getElementById('edit-text').value.trim();
+  if(!text) return;
+  cells[editTarget]={kind,imgKey,text};
+  pushData('cells',cells);
+  closeModal();
+  render();
+};
+window.closeModal=()=>{
+  document.getElementById('modal-overlay').classList.remove('show');
+  document.getElementById('edit-modal').classList.remove('show');
+  editTarget=null;
+  if(editMode) openEditMode();
+};
+
+['ruby','sapphire'].forEach(id=>{
+  const inp=document.getElementById('name-'+id);
+  inp.addEventListener('change',()=>{names[id]=inp.value.toUpperCase();inp.value=names[id];pushData('names',names);});
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')inp.blur();});
+});
+</script>
+</body>
+</html>
