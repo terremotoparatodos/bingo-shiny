@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Overlay Ruby – Bingo Pokémon OR/AS</title>
+<title>Overlay Ruby – Bingo Pokemon OR/AS</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@700;800&display=swap');
   * { box-sizing:border-box; margin:0; padding:0; }
@@ -33,8 +33,7 @@
   .bcell.checked { border-color:#C1272D; background:rgba(193,39,45,.2); box-shadow:inset 0 0 10px rgba(193,39,45,.2); }
   .bcell.bingo-line { animation:bpulse .9s ease infinite alternate; }
   @keyframes bpulse { from { box-shadow:inset 0 0 8px rgba(193,39,45,.2); } to { box-shadow:inset 0 0 20px rgba(193,39,45,.5), 0 0 12px #C1272D; } }
-  .bcell.checked::after { content:'✦'; position:absolute; top:2px; right:3px; font-size:8px; color:#FF6B6B; animation:pop .3s ease; }
-  @keyframes pop { from { transform:scale(0) rotate(-20deg); } to { transform:scale(1) rotate(0); } }
+  .bcell.checked::after { content:'X'; position:absolute; top:2px; right:3px; font-size:8px; color:#FF6B6B; }
   .bcell-img { width:28px; height:28px; object-fit:contain; display:block; margin-bottom:2px; }
   .bcell-img.lg { width:32px; height:32px; }
   .bcell-img.pb { width:24px; height:24px; image-rendering:pixelated; }
@@ -45,8 +44,10 @@
 </head>
 <body>
 <div id="bg"></div>
-<div class="edge top"></div><div class="edge bottom"></div>
-<div class="edge left"></div><div class="edge right"></div>
+<div class="edge top"></div>
+<div class="edge bottom"></div>
+<div class="edge left"></div>
+<div class="edge right"></div>
 <div id="top">
   <div id="ds-frame"><div id="ds-screen"></div></div>
   <div id="cam-frame">
@@ -56,7 +57,7 @@
 </div>
 <div id="bottom">
   <div class="bingo-header">
-    <div class="bingo-label">BINGO POKÉMON</div>
+    <div class="bingo-label">BINGO POKEMON</div>
     <div class="bingo-score" id="bingo-score">0/16</div>
   </div>
   <div class="bingo-grid" id="bingo-grid"></div>
@@ -66,66 +67,92 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
 const PLAYER = 'ruby';
-const app = initializeApp({ databaseURL:'https://bingo-shiny-default-rtdb.firebaseio.com/' });
-const db  = getDatabase(app);
+const app = initializeApp({ databaseURL: 'https://bingo-shiny-default-rtdb.firebaseio.com/' });
+const db = getDatabase(app);
 
 const BASE = '/bingo-shiny/img/';
-const IMGS = {
-  bug:'bug.png',dark:'dark.png',dragon:'dragon.png',electric:'electric.png',
-  fairy:'fairy.png',fighting:'fighting.png',fire:'fire.png',flying:'flying.png',
-  ghost:'ghost.png',grass:'grass.png',ground:'ground.png',ice:'ice.png',
-  normal:'normal.png',poison:'poison.png',psychic:'psychic.png',rock:'rock.png',
-  steel:'steel.png',water:'water.png',mt:'mt.png',potion:'potion.png',
-  mountain:'mountain.png',cave:'cave.png',sea:'sea.png',forest:'forest.png',
-  mewtwo:'mewtwo.png',mew:'mew.png',zapdos:'zapdos.png',pokeball:'pokeball.png'
-};
-const src = k => BASE + (IMGS[k] || 'normal.png');
+const IMGS = { bug:'bug.png', dark:'dark.png', dragon:'dragon.png', electric:'electric.png', fairy:'fairy.png', fighting:'fighting.png', fire:'fire.png', flying:'flying.png', ghost:'ghost.png', grass:'grass.png', ground:'ground.png', ice:'ice.png', normal:'normal.png', poison:'poison.png', psychic:'psychic.png', rock:'rock.png', steel:'steel.png', water:'water.png', mt:'mt.png', potion:'potion.png', mountain:'mountain.png', cave:'cave.png', sea:'sea.png', forest:'forest.png', mewtwo:'mewtwo.png', mew:'mew.png', zapdos:'zapdos.png', pokeball:'pokeball.png' };
 
-const LINES = [
-  [0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],
-  [0,4,8,12],[1,5,9,13],[2,6,10,14],[3,7,11,15],
-  [0,5,10,15],[3,6,9,12]
-];
+const src = function(k) { return BASE + (IMGS[k] || 'normal.png'); };
 
-let cells = [];
-let playerState = new Array(16).fill(false);
+const LINES = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],[0,4,8,12],[1,5,9,13],[2,6,10,14],[3,7,11,15],[0,5,10,15],[3,6,9,12]];
+
+var cells = [];
+var playerState = [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false];
 
 function getBingoLines() {
-  return LINES.filter(l => l.every(i => (cells[i] && cells[i].kind === 'free') || playerState[i]));
+  return LINES.filter(function(l) {
+    return l.every(function(i) {
+      return (cells[i] && cells[i].kind === 'free') || playerState[i];
+    });
+  });
+}
+
+function makeCell(cell, i, bingoSet) {
+  var div = document.createElement('div');
+  div.className = 'bcell';
+
+  if (cell.kind === 'free') {
+    div.classList.add('free');
+    var trophy = document.createElement('div');
+    trophy.style.fontSize = '18px';
+    trophy.style.marginBottom = '1px';
+    trophy.textContent = '\uD83C\uDFC6';
+    var freeLabel = document.createElement('div');
+    freeLabel.className = 'bcell-text';
+    freeLabel.textContent = 'FREE';
+    div.appendChild(trophy);
+    div.appendChild(freeLabel);
+  } else {
+    if (playerState[i]) { div.classList.add('checked'); }
+    if (bingoSet.has(i) && playerState[i]) { div.classList.add('bingo-line'); }
+
+    var imgCls = 'bcell-img';
+    if (cell.kind === 'capture' && cell.imgKey !== 'pokeball') { imgCls += ' lg'; }
+    if (cell.imgKey === 'pokeball') { imgCls += ' pb'; }
+
+    var img = document.createElement('img');
+    img.className = imgCls;
+    img.src = src(cell.imgKey);
+    img.alt = '';
+    img.addEventListener('error', function() { this.style.display = 'none'; });
+
+    var txt = document.createElement('div');
+    txt.className = 'bcell-text';
+    txt.textContent = cell.text;
+
+    div.appendChild(img);
+    div.appendChild(txt);
+  }
+  return div;
 }
 
 function render() {
-  if (!cells.length) return;
-  const grid = document.getElementById('bingo-grid');
-  const bingoSet = new Set(getBingoLines().flat());
+  if (!cells.length) { return; }
+  var grid = document.getElementById('bingo-grid');
+  var bingoLines = getBingoLines();
+  var bingoSet = new Set();
+  bingoLines.forEach(function(l) { l.forEach(function(i) { bingoSet.add(i); }); });
+
   grid.innerHTML = '';
-  cells.forEach((cell, i) => {
-    const div = document.createElement('div');
-    div.className = 'bcell';
-    if (cell.kind === 'free') {
-      div.classList.add('free');
-      div.innerHTML = '<div style="font-size:18px;margin-bottom:1px">🏆</div><div class="bcell-text">FREE</div>';
-    } else {
-      if (playerState[i]) div.classList.add('checked');
-      if (bingoSet.has(i) && playerState[i]) div.classList.add('bingo-line');
-      const isLegend   = cell.kind === 'capture' && cell.imgKey !== 'pokeball';
-      const isPokeball = cell.imgKey === 'pokeball';
-      const cls = isLegend ? 'lg' : isPokeball ? 'pb' : '';
-      const imgClass = 'bcell-img' + (cls ? ' ' + cls : '');
-      div.innerHTML = '<img class="' + imgClass + '" src="' + src(cell.imgKey) + '" alt="" onerror="this.style.display=\'none\'"/><div class="bcell-text">' + cell.text + '</div>';
-    }
-    grid.appendChild(div);
+  cells.forEach(function(cell, i) {
+    grid.appendChild(makeCell(cell, i, bingoSet));
   });
-  const count = playerState.filter((v, i) => v || (cells[i] && cells[i].kind === 'free')).length;
+
+  var count = playerState.filter(function(v, i) {
+    return v || (cells[i] && cells[i].kind === 'free');
+  }).length;
   document.getElementById('bingo-score').textContent = count + '/16';
 }
 
-onValue(ref(db, 'bingo'), (snap) => {
-  const data = snap.val();
-  if (!data) return;
-  if (data.cells) cells = data.cells;
-  if (data.state && data.state[PLAYER]) playerState = data.state[PLAYER];
-  if (data.names && data.names[PLAYER]) document.getElementById('player-name').textContent = data.names[PLAYER];
+onValue(ref(db, 'bingo'), function(snap) {
+  var data = snap.val();
+  if (!data) { return; }
+  if (data.cells) { cells = data.cells; }
+  if (data.state && data.state[PLAYER]) { playerState = data.state[PLAYER]; }
+  if (data.names && data.names[PLAYER]) {
+    document.getElementById('player-name').textContent = data.names[PLAYER];
+  }
   render();
 });
 </script>
