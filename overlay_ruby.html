@@ -9,214 +9,148 @@
 
   body {
     width:1920px; height:1080px; overflow:hidden;
-    background:#08080f;
+    background:transparent;
     font-family:'Nunito',sans-serif; color:#f0f0ff;
     position:relative;
   }
 
-  /* ── Fondo base ── */
-  #bg {
-    position:absolute; inset:0; z-index:0; pointer-events:none;
-    background: radial-gradient(ellipse 1400px 800px at 50% 50%, rgba(60,8,12,.95) 0%, #08080f 75%);
-  }
-
   /*
-    ZONAS TRANSPARENTES (donde NO debe haber efectos):
-    - 3DS:   left:20, top:20,  width:1005, height:599  → right edge: 1025, bottom: 619
-    - CAM:   left:1041, top:20, width:859,  height:560  → right: 1900, bottom: 580
-    Los efectos animados van en un canvas con clip-path que excluye esas zonas.
-    Solución: ponemos los efectos SOLO en las zonas seguras usando
-    elementos posicionados en márgenes + zona bingo.
+    Zonas de fondo oscuro — solo donde NO están 3DS ni cam.
+    3DS:  left:20, top:20, w:1005, h:599  → bottom:619, right:1025
+    CAM:  left:1041, top:20, w:859, h:560 → bottom:580, right:1900
+    border-radius:10px en los bordes que tocan los frames.
   */
 
-  /* Zona izquierda (margen) */
-  .fx-zone {
-    position:absolute; z-index:1; pointer-events:none; overflow:hidden;
-  }
-  /* Margen superior (encima de todo) */
-  #fz-top    { top:0; left:0; right:0; height:20px; }
-  /* Margen izquierdo */
-  #fz-left   { top:0; left:0; width:20px; bottom:0; }
-  /* Margen derecho */
-  #fz-right  { top:0; right:0; width:20px; bottom:0; }
-  /* Margen inferior */
-  #fz-bottom { bottom:0; left:0; right:0; height:20px; }
-  /* Entre 3DS y borde inferior izquierdo (debajo del frame de juego) */
-  #fz-left-bot { top:619px; left:20px; width:1005px; height:17px; }
-  /* Zona derecha entre cam y borde */
-  #fz-right-top { top:580px; left:1041px; right:20px; height:56px; }
-  /* BINGO completo — aquí sí van efectos en el fondo */
-  #fz-bingo  { top:636px; left:20px; right:20px; bottom:20px; border-radius:12px; overflow:hidden; }
-
-  /* Ondas de color — dentro de cada fx-zone */
-  .wave {
-    position:absolute; border-radius:50%;
-    background:radial-gradient(circle, rgba(193,39,45,.22) 0%, transparent 70%);
-    animation:wavePulse ease-in-out infinite;
-  }
-  @keyframes wavePulse {
-    0%,100% { transform:scale(1);   opacity:.5; }
-    50%      { transform:scale(1.4); opacity:1; }
+  .zone {
+    position:absolute; z-index:1; pointer-events:none;
+    background:#08080f; overflow:hidden;
   }
 
-  /* Pokéballs — solo en zonas seguras */
+  /* A: franja top completa */
+  #zA { top:0; left:0; width:1920px; height:20px; }
+
+  /* B: margen izquierdo (al lado de 3DS) */
+  #zB { top:20px; left:0; width:20px; height:1060px; }
+
+  /* C: margen derecho (al lado de cam) */
+  #zC { top:20px; right:0; width:20px; height:1060px; }
+
+  /* D: separador entre 3DS y cam — respeta border-radius de ambos frames */
+  #zD { top:20px; left:1025px; width:16px; height:616px; }
+
+  /* E: debajo del frame 3DS — con border-radius inferior izquierdo */
+  #zE {
+    top:619px; left:20px; width:1021px; height:17px;
+    border-radius:0 0 0 10px;
+  }
+
+  /* F: debajo del frame cam — con border-radius inferior derecho */
+  #zF {
+    top:580px; left:1041px; width:859px; height:56px;
+    border-radius:0 0 10px 0;
+  }
+
+  /* H: franja bottom completa */
+  #zH { bottom:0; left:0; width:1920px; height:20px; }
+
+  /* G: bingo */
+  #zG {
+    position:absolute; z-index:1; pointer-events:none;
+    top:636px; left:20px; width:1880px; height:424px;
+    background:#08080f;
+    border:2px solid rgba(193,39,45,.55);
+    border-radius:12px;
+    box-shadow:0 0 28px rgba(193,39,45,.25);
+    overflow:hidden;
+  }
+  #zG::after {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(ellipse 1200px 200px at 50% 120%, rgba(193,39,45,.15) 0%, transparent 70%);
+    animation:bingoGlow 5s ease-in-out infinite alternate;
+  }
+  @keyframes bingoGlow { from{opacity:.5;} to{opacity:1;} }
+
+  /* Efectos animados */
   .pball {
-    position:absolute;
-    border-radius:50%;
-    border:2px solid rgba(193,39,45,.45);
-    background:linear-gradient(180deg, rgba(193,39,45,.3) 50%, rgba(20,20,40,.3) 50%);
-    animation:floatBall linear infinite;
-    opacity:0;
+    position:absolute; border-radius:50%;
+    border:2px solid rgba(193,39,45,.4);
+    background:linear-gradient(180deg, rgba(193,39,45,.25) 50%, rgba(20,20,40,.25) 50%);
+    animation:floatBall linear infinite; opacity:0;
   }
-  .pball::after {
-    content:''; position:absolute; top:50%; left:0; right:0;
-    height:2px; background:rgba(193,39,45,.45); transform:translateY(-50%);
-  }
-  .pball::before {
-    content:''; position:absolute; top:50%; left:50%;
-    transform:translate(-50%,-50%);
-    width:30%; height:30%; border-radius:50%;
-    border:2px solid rgba(193,39,45,.5);
-    background:rgba(15,15,30,.7);
-  }
+  .pball::after { content:''; position:absolute; top:50%; left:0; right:0; height:2px; background:rgba(193,39,45,.4); transform:translateY(-50%); }
+  .pball::before { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:30%; height:30%; border-radius:50%; border:2px solid rgba(193,39,45,.45); background:rgba(15,15,30,.7); }
   @keyframes floatBall {
-    0%   { transform:translateY(120%) rotate(0deg);   opacity:0; }
-    8%   { opacity:.7; }
-    92%  { opacity:.4; }
+    0%   { transform:translateY(120%) rotate(0deg); opacity:0; }
+    8%   { opacity:.65; }
+    92%  { opacity:.35; }
     100% { transform:translateY(-120%) rotate(360deg); opacity:0; }
   }
+  .spark { position:absolute; width:3px; height:3px; border-radius:50%; animation:sparkle ease-in-out infinite; }
+  @keyframes sparkle { 0%,100%{transform:scale(0);opacity:0;} 50%{transform:scale(1);opacity:.85;} }
+  .wave { position:absolute; border-radius:50%; background:radial-gradient(circle, rgba(193,39,45,.2) 0%, transparent 70%); animation:wavePulse ease-in-out infinite; }
+  @keyframes wavePulse { 0%,100%{transform:scale(1);opacity:.4;} 50%{transform:scale(1.5);opacity:.9;} }
 
-  /* Destellos */
-  .spark {
-    position:absolute; width:3px; height:3px; border-radius:50%;
-    animation:sparkle ease-in-out infinite;
-  }
-  @keyframes sparkle {
-    0%,100% { transform:scale(0); opacity:0; }
-    50%      { transform:scale(1); opacity:.9; }
-  }
-
-  /* Scanlines globales — pero con pointer-events none y z-index bajo */
-  #scan {
-    position:absolute; inset:0; z-index:0; pointer-events:none;
-    background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.035) 3px,rgba(0,0,0,.035) 4px);
-  }
-
-  /* ── Bordes y esquinas ── */
-  .edge { position:absolute; z-index:10; pointer-events:none; }
-  .edge.top    { top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#C1272D,#8B1A1A); }
-  .edge.bottom { bottom:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#8B1A1A,#C1272D); }
+  /* Bordes */
+  .edge { position:absolute; z-index:20; pointer-events:none; }
+  .edge.top    { top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#C1272D,#8B1A1A,#C1272D); }
+  .edge.bottom { bottom:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#8B1A1A,#C1272D,#8B1A1A); }
   .edge.left   { left:0; top:0; bottom:0; width:3px; background:linear-gradient(180deg,#C1272D,#8B1A1A); }
   .edge.right  { right:0; top:0; bottom:0; width:3px; background:linear-gradient(180deg,#8B1A1A,#C1272D); }
-  .corner { position:absolute; z-index:11; pointer-events:none; }
+  .corner { position:absolute; z-index:21; pointer-events:none; }
   .corner.tl { top:0; left:0; width:24px; height:24px; border-top:3px solid #FF6B6B; border-left:3px solid #FF6B6B; }
   .corner.tr { top:0; right:0; width:24px; height:24px; border-top:3px solid #FF6B6B; border-right:3px solid #FF6B6B; }
   .corner.bl { bottom:0; left:0; width:24px; height:24px; border-bottom:3px solid #FF6B6B; border-left:3px solid #FF6B6B; }
   .corner.br { bottom:0; right:0; width:24px; height:24px; border-bottom:3px solid #FF6B6B; border-right:3px solid #FF6B6B; }
 
-  /* ── TOP ── */
-  #top {
-    position:absolute; top:20px; left:20px; right:20px; height:600px;
-    display:grid; grid-template-columns:1005px 1fr; gap:16px; z-index:5;
-  }
+  /* Marcos — solo borde, sin fondo */
+  #top { position:absolute; top:20px; left:20px; right:20px; height:600px; display:grid; grid-template-columns:1005px 1fr; gap:16px; z-index:5; pointer-events:none; }
 
-  /* 3DS — solo marco, interior COMPLETAMENTE vacío */
   #ds-frame {
     width:1005px; height:599px;
     border:3px solid #C1272D; border-radius:10px;
     box-shadow:0 0 30px rgba(193,39,45,.5);
-    align-self:center;
-    background:transparent !important;
-    pointer-events:none;
+    align-self:center; background:transparent;
   }
-
-  /* Cam — solo marco, interior COMPLETAMENTE vacío */
   #cam-frame {
     border:2px solid rgba(193,39,45,.65); border-radius:10px;
     box-shadow:0 0 22px rgba(193,39,45,.35);
     display:flex; flex-direction:column; align-self:stretch;
-    background:transparent !important;
-    pointer-events:none;
+    background:transparent;
   }
-  #cam-inner {
-    flex:1;
-    background:transparent !important;
-  }
+  #cam-inner { flex:1; background:transparent; }
 
-  /* Name tag — sólido oscuro */
   #name-tag {
     padding:10px 18px; flex-shrink:0;
     border-top:1px solid rgba(193,39,45,.5);
     background:#08080f;
-    display:flex; align-items:center; gap:10px; pointer-events:none;
+    display:flex; align-items:center; gap:10px;
     border-radius:0 0 9px 9px;
   }
   .dot { width:10px; height:10px; border-radius:50%; background:#C1272D; box-shadow:0 0 8px #C1272D; flex-shrink:0; }
   #player-name { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:2px; color:#FF6B6B; }
 
-  /* ── BINGO ── */
+  /* Bingo contenido */
   #bottom {
-    position:absolute;
-    top:636px; left:20px; right:20px; bottom:20px;
-    border:2px solid rgba(193,39,45,.55); border-radius:12px;
-    background:#0a0010;
-    box-shadow:0 0 28px rgba(193,39,45,.25);
+    position:absolute; top:636px; left:20px; width:1880px; height:424px;
     padding:10px 14px;
     display:flex; flex-direction:column; gap:6px;
-    z-index:5; pointer-events:none; overflow:hidden;
+    z-index:5; pointer-events:none;
   }
-  /* Shimmer interno del bingo */
-  #bottom::after {
-    content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
-    background:
-      radial-gradient(ellipse 900px 120px at 50% 110%, rgba(193,39,45,.12) 0%, transparent 70%),
-      radial-gradient(ellipse 400px 80px at 10% 50%, rgba(193,39,45,.06) 0%, transparent 70%);
-    animation:bingoGlow 5s ease-in-out infinite alternate;
-  }
-  @keyframes bingoGlow {
-    from { opacity:.6; }
-    to   { opacity:1; }
-  }
-
-  .bingo-header { display:flex; align-items:center; justify-content:space-between; flex-shrink:0; position:relative; z-index:1; }
+  .bingo-header { display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
   .bingo-label { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:3px; color:rgba(255,100,100,.5); }
   .bingo-score { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:1px; padding:2px 14px; border-radius:20px; background:#C1272D; color:#fff; box-shadow:0 0 10px rgba(193,39,45,.6); }
 
-  .bingo-grid {
-    flex:1; min-height:0;
-    display:grid; grid-template-columns:repeat(4,1fr); grid-template-rows:repeat(4,1fr);
-    gap:5px; position:relative; z-index:1;
-  }
+  .bingo-grid { flex:1; min-height:0; display:grid; grid-template-columns:repeat(4,1fr); grid-template-rows:repeat(4,1fr); gap:5px; }
 
-  .bcell {
-    border-radius:8px; border:1.5px solid #1e1e38;
-    background:#0d0d22;
-    display:flex; flex-direction:row;
-    align-items:center; justify-content:space-between;
-    padding:0 8px 0 10px; gap:6px;
-    position:relative; overflow:hidden;
-    transition:border-color .3s, background .3s, box-shadow .3s;
-  }
-  .bcell.free {
-    flex-direction:column; justify-content:center; align-items:center;
-    background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,215,0,.03));
-    border-color:rgba(255,215,0,.6); padding:6px;
-  }
-  .bcell.checked {
-    border-color:#C1272D; background:rgba(193,39,45,.2);
-    box-shadow:inset 0 0 14px rgba(193,39,45,.3);
-  }
+  .bcell { border-radius:8px; border:1.5px solid #1e1e38; background:#0d0d22; display:flex; flex-direction:row; align-items:center; justify-content:space-between; padding:0 8px 0 10px; gap:6px; position:relative; overflow:hidden; transition:border-color .3s,background .3s,box-shadow .3s; }
+  .bcell.free { flex-direction:column; justify-content:center; align-items:center; background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,215,0,.03)); border-color:rgba(255,215,0,.6); padding:6px; }
+  .bcell.checked { border-color:#C1272D; background:rgba(193,39,45,.2); box-shadow:inset 0 0 14px rgba(193,39,45,.3); }
   .bcell.bingo-line { animation:bpulse .9s ease infinite alternate; }
-  @keyframes bpulse {
-    from { box-shadow:inset 0 0 8px rgba(193,39,45,.3); }
-    to   { box-shadow:inset 0 0 22px rgba(193,39,45,.65), 0 0 10px #C1272D; }
-  }
+  @keyframes bpulse { from{box-shadow:inset 0 0 8px rgba(193,39,45,.3);}to{box-shadow:inset 0 0 22px rgba(193,39,45,.65),0 0 10px #C1272D;} }
   .bcell.checked::after { content:'✦'; position:absolute; top:3px; right:4px; font-size:9px; color:#FF6B6B; }
-
   .bcell-text { font-size:17px; font-weight:700; line-height:1.3; color:#ddddf5; flex:1; text-align:left; }
   .bcell.free .bcell-text { color:#FFD700; font-size:13px; font-weight:800; text-align:center; }
   .bcell.checked .bcell-text { color:#fff; }
-
   .bcell-img { width:44px; height:44px; object-fit:contain; display:block; flex-shrink:0; }
   .bcell-img.lg { width:50px; height:50px; }
   .bcell-img.pb { width:36px; height:36px; image-rendering:pixelated; }
@@ -225,53 +159,39 @@
 </head>
 <body>
 
-<div id="bg"></div>
-<div id="scan"></div>
-
-<!-- Efectos animados SOLO en zonas seguras (fuera de 3DS y cam) -->
-
-<!-- Margen izquierdo -->
-<div class="fx-zone" id="fz-left">
-  <div class="pball" style="width:16px;height:16px;bottom:10%;left:2px;animation-duration:12s;animation-delay:0s;"></div>
-  <div class="pball" style="width:22px;height:22px;bottom:40%;left:0px;animation-duration:17s;animation-delay:-6s;"></div>
-  <div class="spark" style="top:30%;left:8px;background:#C1272D;animation-duration:3s;animation-delay:0s;"></div>
-  <div class="spark" style="top:60%;left:4px;background:#FF6B6B;animation-duration:2.5s;animation-delay:-1s;"></div>
-  <div class="wave" style="width:80px;height:80px;top:20%;left:-40px;animation-duration:7s;animation-delay:0s;"></div>
+<!-- Zonas de fondo oscuro -->
+<div class="zone" id="zA"></div>
+<div class="zone" id="zB">
+  <div class="pball" style="width:14px;height:14px;left:3px;animation-duration:13s;animation-delay:0s;"></div>
+  <div class="pball" style="width:10px;height:10px;left:2px;animation-duration:18s;animation-delay:-7s;"></div>
+  <div class="wave" style="width:80px;height:80px;top:15%;left:-50px;animation-duration:7s;animation-delay:0s;"></div>
+  <div class="spark" style="top:25%;left:6px;background:#C1272D;animation-duration:3.5s;animation-delay:-1s;"></div>
+  <div class="spark" style="top:65%;left:4px;background:#FF6B6B;animation-duration:2.5s;animation-delay:-2s;"></div>
 </div>
-
-<!-- Margen derecho -->
-<div class="fx-zone" id="fz-right">
-  <div class="pball" style="width:18px;height:18px;bottom:20%;right:2px;animation-duration:14s;animation-delay:-3s;"></div>
-  <div class="spark" style="top:25%;right:6px;background:#C1272D;animation-duration:4s;animation-delay:-2s;"></div>
-  <div class="spark" style="top:55%;right:3px;background:#FFD700;animation-duration:3s;animation-delay:-1.5s;"></div>
-  <div class="wave" style="width:60px;height:60px;top:30%;right:-30px;animation-duration:9s;animation-delay:-3s;"></div>
+<div class="zone" id="zC">
+  <div class="pball" style="width:12px;height:12px;left:3px;animation-duration:15s;animation-delay:-4s;"></div>
+  <div class="wave" style="width:70px;height:70px;top:30%;left:-45px;animation-duration:8s;animation-delay:-2s;"></div>
+  <div class="spark" style="top:40%;left:5px;background:#C1272D;animation-duration:4s;animation-delay:-3s;"></div>
+  <div class="spark" style="top:70%;left:3px;background:#FFD700;animation-duration:3s;animation-delay:-1s;"></div>
 </div>
-
-<!-- Margen superior -->
-<div class="fx-zone" id="fz-top">
-  <div class="spark" style="top:5px;left:30%;background:#FF6B6B;animation-duration:3.5s;animation-delay:0s;"></div>
-  <div class="spark" style="top:5px;left:60%;background:#C1272D;animation-duration:2.5s;animation-delay:-1s;"></div>
-  <div class="spark" style="top:5px;left:80%;background:#FFD700;animation-duration:4s;animation-delay:-2s;"></div>
+<div class="zone" id="zD">
+  <div class="spark" style="top:30%;left:5px;background:#C1272D;animation-duration:3s;animation-delay:0s;"></div>
+  <div class="spark" style="top:65%;left:4px;background:#FF6B6B;animation-duration:4s;animation-delay:-2s;"></div>
 </div>
+<div class="zone" id="zE"></div>
+<div class="zone" id="zF"></div>
+<div class="zone" id="zH"></div>
 
-<!-- Margen inferior -->
-<div class="fx-zone" id="fz-bottom">
-  <div class="spark" style="bottom:5px;left:10%;background:#FF6B6B;animation-duration:3s;animation-delay:-1s;"></div>
-  <div class="spark" style="bottom:5px;left:50%;background:#C1272D;animation-duration:4s;animation-delay:0s;"></div>
-  <div class="spark" style="bottom:5px;left:85%;background:#FFD700;animation-duration:2.5s;animation-delay:-2s;"></div>
-</div>
-
-<!-- Zona bingo (fondo del bingo — efectos dentro del panel) -->
-<div class="fx-zone" id="fz-bingo">
-  <div class="pball" style="width:14px;height:14px;left:5%;animation-duration:11s;animation-delay:0s;"></div>
-  <div class="pball" style="width:20px;height:20px;left:25%;animation-duration:15s;animation-delay:-5s;"></div>
-  <div class="pball" style="width:12px;height:12px;left:50%;animation-duration:13s;animation-delay:-3s;"></div>
-  <div class="pball" style="width:18px;height:18px;left:70%;animation-duration:16s;animation-delay:-8s;"></div>
-  <div class="pball" style="width:10px;height:10px;left:88%;animation-duration:12s;animation-delay:-2s;"></div>
-  <div class="wave" style="width:300px;height:120px;bottom:-60px;left:30%;animation-duration:8s;animation-delay:0s;"></div>
-  <div class="spark" style="top:15%;left:15%;background:#C1272D;animation-duration:3s;animation-delay:-1s;"></div>
-  <div class="spark" style="top:50%;left:40%;background:#FF6B6B;animation-duration:4s;animation-delay:-2s;"></div>
-  <div class="spark" style="top:70%;left:75%;background:#FFD700;animation-duration:2.5s;animation-delay:0s;"></div>
+<!-- Bingo fondo -->
+<div id="zG">
+  <div class="pball" style="width:12px;height:12px;left:8%;animation-duration:12s;animation-delay:0s;"></div>
+  <div class="pball" style="width:16px;height:16px;left:28%;animation-duration:16s;animation-delay:-5s;"></div>
+  <div class="pball" style="width:10px;height:10px;left:52%;animation-duration:14s;animation-delay:-3s;"></div>
+  <div class="pball" style="width:14px;height:14px;left:72%;animation-duration:17s;animation-delay:-8s;"></div>
+  <div class="pball" style="width:8px;height:8px;left:90%;animation-duration:11s;animation-delay:-2s;"></div>
+  <div class="spark" style="top:20%;left:12%;background:#C1272D;animation-duration:3.5s;animation-delay:-1s;"></div>
+  <div class="spark" style="top:55%;left:45%;background:#FF6B6B;animation-duration:4s;animation-delay:-2s;"></div>
+  <div class="spark" style="top:75%;left:78%;background:#FFD700;animation-duration:3s;animation-delay:0s;"></div>
 </div>
 
 <!-- Bordes -->
@@ -280,7 +200,7 @@
 <div class="corner tl"></div><div class="corner tr"></div>
 <div class="corner bl"></div><div class="corner br"></div>
 
-<!-- Top -->
+<!-- Marcos transparentes -->
 <div id="top">
   <div id="ds-frame"></div>
   <div id="cam-frame">
@@ -292,7 +212,7 @@
   </div>
 </div>
 
-<!-- Bingo -->
+<!-- Bingo contenido -->
 <div id="bottom">
   <div class="bingo-header">
     <div class="bingo-label">BINGO POK&#201;MON</div>
