@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Overlay Ruby – Bingo Pokemon OR/AS</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@700;800&display=swap');
+  * { box-sizing:border-box; margin:0; padding:0; }
+
+  body {
+    width:1920px; height:1080px; overflow:hidden;
+    background:transparent;
+    font-family:'Nunito',sans-serif; color:#f0f0ff;
+    position:relative;
+  }
+
+  /*
+    TÉCNICA: canvas SVG que cubre toda la pantalla con dos agujeros.
+    Los agujeros corresponden EXACTAMENTE al interior de los frames
+    (excluyendo el borde de 3px/2px).
+
+    3DS interior:  x:23, y:23, w:999, h:593  (border 3px + radius 10px)
+    CAM interior:  x:1043, y:22, w:855, h:556 (border 2px + radius 10px)
+  */
+  #mask-layer {
+    position:absolute; inset:0; z-index:3; pointer-events:none;
+  }
+
+  /* Bordes y esquinas encima de todo */
+  .edge { position:absolute; z-index:20; pointer-events:none; }
+  .edge.top    { top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#1565C0,#0A2F6B,#1565C0); }
+  .edge.bottom { bottom:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#0A2F6B,#1565C0,#0A2F6B); }
+  .edge.left   { left:0; top:0; bottom:0; width:3px; background:linear-gradient(180deg,#1565C0,#0A2F6B); }
+  .edge.right  { right:0; top:0; bottom:0; width:3px; background:linear-gradient(180deg,#0A2F6B,#1565C0); }
+  .corner { position:absolute; z-index:21; pointer-events:none; }
+  .corner.tl { top:0; left:0; width:24px; height:24px; border-top:3px solid #64B5F6; border-left:3px solid #64B5F6; }
+  .corner.tr { top:0; right:0; width:24px; height:24px; border-top:3px solid #64B5F6; border-right:3px solid #64B5F6; }
+  .corner.bl { bottom:0; left:0; width:24px; height:24px; border-bottom:3px solid #64B5F6; border-left:3px solid #64B5F6; }
+  .corner.br { bottom:0; right:0; width:24px; height:24px; border-bottom:3px solid #64B5F6; border-right:3px solid #64B5F6; }
+
+  /* Marcos — solo borde visible, sin fondo */
+  #top {
+    position:absolute; top:20px; left:20px; right:20px; height:600px;
+    display:grid; grid-template-columns:1005px 1fr; gap:16px;
+    z-index:5; pointer-events:none;
+  }
+  #ds-frame {
+    width:1005px; height:599px;
+    border:3px solid #1565C0; border-radius:10px;
+    box-shadow:0 0 30px rgba(21,101,192,.6);
+    align-self:center; background:transparent;
+  }
+  #cam-frame {
+    border:2px solid rgba(21,101,192,.7); border-radius:10px;
+    box-shadow:0 0 22px rgba(21,101,192,.4);
+    display:flex; flex-direction:column; align-self:stretch;
+    background:transparent;
+  }
+  #cam-inner { flex:1; background:transparent; }
+  #name-tag {
+    padding:10px 18px; flex-shrink:0;
+    border-top:1px solid rgba(21,101,192,.5);
+    background:#08080f;
+    display:flex; align-items:center; gap:10px;
+    border-radius:0 0 9px 9px;
+  }
+  .dot { width:10px; height:10px; border-radius:50%; background:#1565C0; box-shadow:0 0 8px #1565C0; flex-shrink:0; }
+  #player-name { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:2px; color:#64B5F6; }
+
+  /* Bingo */
+  #bingo-wrap {
+    position:absolute; top:636px; left:20px; width:1880px; height:424px;
+    background:#08080f;
+    border:2px solid rgba(21,101,192,.55); border-radius:12px;
+    box-shadow:0 0 28px rgba(21,101,192,.25);
+    z-index:5; pointer-events:none; overflow:hidden;
+  }
+  #bingo-wrap::after {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(ellipse 1200px 200px at 50% 120%, rgba(21,101,192,.15) 0%, transparent 70%);
+    animation:bingoGlow 5s ease-in-out infinite alternate;
+  }
+  @keyframes bingoGlow { from{opacity:.5;} to{opacity:1;} }
+
+  #bottom {
+    position:absolute; top:636px; left:20px; width:1880px; height:424px;
+    padding:10px 14px;
+    display:flex; flex-direction:column; gap:6px;
+    z-index:6; pointer-events:none;
+  }
+  .bingo-header { display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+  .bingo-label { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:3px; color:rgba(255,100,100,.5); }
+  .bingo-score { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:1px; padding:2px 14px; border-radius:20px; background:#1565C0; color:#fff; box-shadow:0 0 10px rgba(21,101,192,.6); }
+  .bingo-grid { flex:1; min-height:0; display:grid; grid-template-columns:repeat(4,1fr); grid-template-rows:repeat(4,1fr); gap:5px; }
+  .bcell { border-radius:8px; border:1.5px solid #1e1e38; background:#0d0d22; display:flex; flex-direction:row; align-items:center; justify-content:space-between; padding:0 8px 0 10px; gap:6px; position:relative; overflow:hidden; transition:border-color .3s,background .3s,box-shadow .3s; }
+  .bcell.free { flex-direction:column; justify-content:center; align-items:center; background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,215,0,.03)); border-color:rgba(255,215,0,.6); padding:6px; }
+  .bcell.checked { border-color:#1565C0; background:rgba(21,101,192,.2); box-shadow:inset 0 0 14px rgba(21,101,192,.3); }
+  .bcell.bingo-line { animation:bpulse .9s ease infinite alternate; }
+  @keyframes bpulse { from{box-shadow:inset 0 0 8px rgba(21,101,192,.3);}to{box-shadow:inset 0 0 22px rgba(21,101,192,.65),0 0 10px #1565C0;} }
+  .bcell.checked::after { content:'✦'; position:absolute; top:3px; right:4px; font-size:9px; color:#64B5F6; }
+  .bcell-text { font-size:17px; font-weight:700; line-height:1.3; color:#ddddf5; flex:1; text-align:left; }
+  .bcell.free .bcell-text { color:#FFD700; font-size:13px; font-weight:800; text-align:center; }
+  .bcell.checked .bcell-text { color:#fff; }
+  .bcell-img { width:44px; height:44px; object-fit:contain; display:block; flex-shrink:0; }
+  .bcell-img.lg { width:50px; height:50px; }
+  .bcell-img.pb { width:36px; height:36px; image-rendering:pixelated; }
+  .free-trophy { font-size:26px; margin-bottom:2px; }
+
+  /* Pokéballs y destellos — dentro del SVG mask layer se mueven libremente,
+     pero el clip-path los recorta donde están los huecos */
+    5%   { opacity:.7; }
+    95%  { opacity:.4; }
+    100% { transform:translateY(-50px) rotate(360deg); opacity:0; }
+  } 50%{transform:scale(1);opacity:.9;} }
+</style>
+</head>
+<body>
+
+<!--
+  CAPA DE MÁSCARA SVG: cubre TODA la pantalla con fondo+efectos ruby,
+  pero tiene dos agujeros rectangulares con bordes redondeados
+  exactamente donde están el interior de la 3DS y la cámara.
+
+  3DS interior (excluyendo borde 3px): x=23, y=23, w=999, h=593, rx=8
+  CAM interior (excluyendo borde 2px): x=1043, y=22, w=855, h=556, rx=8
+
+  fill-rule="evenodd" hace que los rectángulos internos sean agujeros.
+-->
+<svg id="mask-layer" xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" style="position:absolute;inset:0;z-index:3;pointer-events:none;">
+  <defs>
+    <radialGradient id="rg1" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#08122a"/>
+      <stop offset="100%" stop-color="#08080f"/>
+    </radialGradient>
+    <!-- Animaciones SVG para ondas -->
+    <radialGradient id="wave1" cx="10%" cy="30%" r="30%">
+      <stop offset="0%" stop-color="rgba(21,101,192,0.18)"/>
+      <stop offset="100%" stop-color="rgba(21,101,192,0)"/>
+    </radialGradient>
+    <radialGradient id="wave2" cx="90%" cy="70%" r="25%">
+      <stop offset="0%" stop-color="rgba(21,101,192,0.14)"/>
+      <stop offset="100%" stop-color="rgba(21,101,192,0)"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Fondo base con agujeros -->
+  <path fill-rule="evenodd" fill="url(#rg1)">
+    <animate attributeName="d" dur="0.001s" fill="freeze"
+      to="M0,0 L1920,0 L1920,1080 L0,1080 Z
+          M30,23 L1015,23 Q1022,23 1022,30 L1022,609 Q1022,616 1015,616 L30,616 Q23,616 23,609 L23,30 Q23,23 30,23 Z
+          M1051,22 L1890,22 Q1898,22 1898,30 L1898,560 Q1898,568 1890,568 L1051,568 Q1043,568 1043,560 L1043,30 Q1043,22 1051,22 Z"/>
+  </path>
+
+  <!-- Ondas de color encima del fondo -->
+  <ellipse cx="200" cy="300" rx="400" ry="300" fill="url(#wave1)" opacity="0.7">
+    <animate attributeName="rx" values="400;520;400" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="ry" values="300;390;300" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.5;1;0.5" dur="8s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="1750" cy="800" rx="300" ry="200" fill="url(#wave2)" opacity="0.6">
+    <animate attributeName="rx" values="300;420;300" dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="ry" values="200;280;200" dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.4;0.9;0.4" dur="10s" repeatCount="indefinite"/>
+  </ellipse>
+
+  <!-- Scanlines -->
+  <rect width="1920" height="1080" fill="none"
+    style="background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);" opacity="0.3"/>
+</svg>
+
+  <div class="pball" style="width:14px;height:14px;left:10%;animation-duration:17s;animation-delay:-5s;"></div>
+  <div class="pball" style="width:22px;height:22px;left:18%;animation-duration:11s;animation-delay:-8s;"></div>
+  <div class="pball" style="width:12px;height:12px;left:58%;animation-duration:15s;animation-delay:-2s;"></div>
+  <div class="pball" style="width:20px;height:20px;left:68%;animation-duration:14s;animation-delay:-6s;"></div>
+  <div class="pball" style="width:16px;height:16px;left:78%;animation-duration:18s;animation-delay:-3s;"></div>
+  <div class="pball" style="width:10px;height:10px;left:88%;animation-duration:12s;animation-delay:-9s;"></div>
+  <div class="pball" style="width:24px;height:24px;left:94%;animation-duration:16s;animation-delay:-1s;"></div>
+  <div class="spark" style="top:8%;left:5%;background:#1565C0;animation-duration:3s;animation-delay:0s;"></div>
+  <div class="spark" style="top:12%;left:15%;background:#64B5F6;animation-duration:4s;animation-delay:-1s;"></div>
+  <div class="spark" style="top:6%;left:92%;background:#FFD700;animation-duration:2.5s;animation-delay:-2s;"></div>
+  <div class="spark" style="top:90%;left:8%;background:#64B5F6;animation-duration:3.5s;animation-delay:-1.5s;"></div>
+  <div class="spark" style="top:85%;left:50%;background:#1565C0;animation-duration:4s;animation-delay:0s;"></div>
+  <div class="spark" style="top:92%;left:80%;background:#FFD700;animation-duration:3s;animation-delay:-2.5s;"></div>
+</div>
+
+<!-- Bordes encima de todo -->
+<div class="edge top"></div><div class="edge bottom"></div>
+<div class="edge left"></div><div class="edge right"></div>
+<div class="corner tl"></div><div class="corner tr"></div>
+<div class="corner bl"></div><div class="corner br"></div>
+
+<!-- Marcos (solo borde) -->
+<div id="top">
+  <div id="ds-frame"></div>
+  <div id="cam-frame">
+    <div id="cam-inner"></div>
+    <div id="name-tag">
+      <div class="dot"></div>
+      <div id="player-name">EQUIPO ZAFIRO</div>
+    </div>
+  </div>
+</div>
+
+<!-- Bingo fondo -->
+<div id="bingo-wrap"></div>
+
+<!-- Bingo contenido -->
+<div id="bottom">
+  <div class="bingo-header">
+    <div class="bingo-label">BINGO POK&#201;MON</div>
+    <div class="bingo-score" id="bingo-score">0/16</div>
+  </div>
+  <div class="bingo-grid" id="bingo-grid"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+const PLAYER = 'sapphire';
+const app = initializeApp({ databaseURL: 'https://bingo-shiny-default-rtdb.firebaseio.com/' });
+const db = getDatabase(app);
+
+const BASE = '/bingo-shiny/img/';
+const IMGS = { bug:'bug.png', dark:'dark.png', dragon:'dragon.png', electric:'electric.png', fairy:'fairy.png', fighting:'fighting.png', fire:'fire.png', flying:'flying.png', ghost:'safari.png', grass:'grass.png', ground:'ground.png', ice:'ice.png', normal:'normal.png', poison:'poison.png', psychic:'psychic.png', rock:'rock.png', steel:'steel.png', water:'water.png', mt:'mt.png', potion:'potion.png', mountain:'mountain.png', cave:'cave.png', sea:'sea.png', forest:'forest.png', mewtwo:'mewtwo.png', mew:'mew.png', zapdos:'zapdos.png', pokeball:'pokeball.png' };
+const src = function(k) { return BASE + (IMGS[k] || 'normal.png'); };
+
+const LINES = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],[0,4,8,12],[1,5,9,13],[2,6,10,14],[3,7,11,15],[0,5,10,15],[3,6,9,12]];
+var cells = [];
+var playerState = [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false];
+
+function getBingoLines() {
+  return LINES.filter(function(l) {
+    return l.every(function(i) { return (cells[i] && cells[i].kind === 'free') || playerState[i]; });
+  });
+}
+
+function makeCell(cell, i, bingoSet) {
+  var div = document.createElement('div');
+  div.className = 'bcell';
+  if (cell.kind === 'free') {
+    div.classList.add('free');
+    var trophy = document.createElement('div');
+    trophy.className = 'free-trophy';
+    trophy.textContent = '\uD83C\uDFC6';
+    var label = document.createElement('div');
+    label.className = 'bcell-text';
+    label.textContent = 'FREE';
+    div.appendChild(trophy);
+    div.appendChild(label);
+  } else {
+    if (playerState[i]) { div.classList.add('checked'); }
+    if (bingoSet.has(i) && playerState[i]) { div.classList.add('bingo-line'); }
+    var txt = document.createElement('div');
+    txt.className = 'bcell-text';
+    txt.textContent = cell.text;
+    var imgCls = 'bcell-img';
+    if (cell.kind === 'capture' && cell.imgKey !== 'pokeball') { imgCls += ' lg'; }
+    if (cell.imgKey === 'pokeball') { imgCls += ' pb'; }
+    var img = document.createElement('img');
+    img.className = imgCls;
+    img.src = src(cell.imgKey);
+    img.alt = '';
+    img.addEventListener('error', function() { this.style.display = 'none'; });
+    div.appendChild(txt);
+    div.appendChild(img);
+  }
+  return div;
+}
+
+function render() {
+  if (!cells.length) { return; }
+  var grid = document.getElementById('bingo-grid');
+  var bingoLines = getBingoLines();
+  var bingoSet = new Set();
+  bingoLines.forEach(function(l) { l.forEach(function(i) { bingoSet.add(i); }); });
+  grid.innerHTML = '';
+  cells.forEach(function(cell, i) { grid.appendChild(makeCell(cell, i, bingoSet)); });
+  var count = playerState.filter(function(v, i) { return v || (cells[i] && cells[i].kind === 'free'); }).length;
+  document.getElementById('bingo-score').textContent = count + '/16';
+}
+
+onValue(ref(db, 'bingo'), function(snap) {
+  var data = snap.val();
+  if (!data) { return; }
+  if (data.cells) { cells = data.cells; }
+  if (data.state && data.state[PLAYER]) { playerState = data.state[PLAYER]; }
+  render();
+});
+</script>
+</body>
+</html>
